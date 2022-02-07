@@ -1,0 +1,3 @@
+﻿Class java
+
+End Class

@@ -1,0 +1,35 @@
+﻿<Page x:Class="java"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NSTAR整合包客户端"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="java"
+      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+      xmlns:XamlHost="clr-namespace:Microsoft.Toolkit.Wpf.UI.XamlHost;assembly=Microsoft.Toolkit.Wpf.UI.XamlHost"
+      xmlns:ui="http://schemas.modernwpf.com/2019">
+    <Grid>
+        <StackPanel>
+            <TextBlock Text="自动下载" Margin="12,12,0,0"></TextBlock>
+            <wpfui:CardControl Title="选择需要下载Java的游戏版本" Subtitle="工具将识别整合包对Java版本的需求，以下载对应版本Java！" Margin="12,8,16,0" Icon="List16">
+                <ComboBox>
+                    
+                </ComboBox>
+            </wpfui:CardControl>
+            <wpfui:CardControl Title="下载信息" Subtitle="下载未开始···" Margin="12,8,16,0" Icon="Info16">
+                <Button Content="开始下载" Margin="6,0,0,0"></Button>
+            </wpfui:CardControl>
+            <TextBlock Text="手动下载" Margin="12,12,0,0"></TextBlock>
+            <wpfui:CardExpander  Header="手动下载Java" Subtitle="前往以下网站下载Java的安装程序或其他版本。" Margin="12,18,16,0" Icon="WebAsset24">
+                <StackPanel Margin="5" Orientation="Horizontal">
+                    <wpfui:Hyperlink NavigateUri="https://drive.dnxshare.cn/s/oE7H7" 
+                                            Content="自建Java收集" Padding="4" Cursor="Hand"/>
+                    <wpfui:Hyperlink NavigateUri="https://www.oracle.com/java/" 
+                                            Content="Java官网" Padding="4" Cursor="Hand"/>
+                </StackPanel>
+            </wpfui:CardExpander>
+        </StackPanel>
+    </Grid>
+</Page>
