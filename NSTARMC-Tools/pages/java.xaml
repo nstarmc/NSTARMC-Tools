@@ -11,7 +11,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019" Loaded="Page_Loaded_1">
     <Grid>
         <StackPanel>
-            <wpfui:CardControl Title="Java下载页面" Subtitle="自本工具发布后，整合包内不再提供内置Java环境&#13;先选择对应的整合包版本，我们会自动获取对应Java环境版本&#13;然后点击开始下载即可下载到整合包内，启动时自动选择该Java" Icon="Page20" Margin="12,12,0,0"/>
+            <wpfui:CardControl Title="Java下载页面" Subtitle="自本工具发布后，整合包内不再提供内置Java环境&#13;先选择对应的整合包版本，我们会自动获取对应Java环境版本&#13;然后点击开始下载即可下载到整合包内，启动时自动选择该Java" Icon="Page20" Margin="12,8,16,0"/>
             <TextBlock Text="自动下载" Margin="12,12,0,0"></TextBlock>
             <wpfui:CardControl Title="选择需要下载Java的游戏版本" Subtitle="工具将识别整合包对Java版本的需求，以下载对应版本Java！" Margin="12,8,16,0" Icon="List16">
                 <ComboBox x:Name="mclist"/>
@@ -21,6 +21,9 @@
             <wpfui:CardControl Title="下载信息" Margin="12,8,16,0" Icon="Info16" x:Name="dw_java_text">
                 <Button Content="开始下载" Margin="6,0,0,0" x:Name="bt_start"></Button>
             </wpfui:CardControl>
+            <wpfui:CardControl x:Name="card_unzip" Title="解压Java" Subtitle="工具正在帮您将下载的Java解压到整合包内···" Margin="12,8,16,0" Visibility="Collapsed">
+                <ui:ProgressRing IsActive="True" x:Name="ring_unzip"/>
+            </wpfui:CardControl>
             <wpfui:Card Margin="12,8,16,0" x:Name="card_dwinfo" Visibility="Collapsed">
                 <StackPanel>
                     <TextBlock x:Name="dw_info"></TextBlock>
@@ -28,7 +31,7 @@
                 </StackPanel>
             </wpfui:Card>
             <TextBlock Text="手动下载" Margin="12,12,0,0"></TextBlock>
-            <wpfui:CardExpander  Header="手动下载Java" Subtitle="前往以下网站下载Java的安装程序或其他版本。" Margin="12,18,16,0" Icon="WebAsset24">
+            <wpfui:CardExpander  Header="手动下载Java" Subtitle="前往以下网站下载Java的安装程序或其他版本。" Margin="12,18,16,6" Icon="WebAsset24">
                 <StackPanel Margin="5" Orientation="Horizontal">
                     <wpfui:Hyperlink NavigateUri="https://drive.dnxshare.cn/s/oE7H7" 
                                             Content="自建Java收集" Padding="4" Cursor="Hand"/>

@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NSTARMC_Tools"
         mc:Ignorable="d"
-        Icon="logo.ico"
-        Title="NSTAR整合包工具" Height="450" Width="800"
+        Icon="logo.ico" 
+        Title="NSTAR整合包工具" Height="550" Width="900"
         ui:WindowHelper.UseModernWindowStyle="True"
         xmlns:ui="http://schemas.modernwpf.com/2019"
-        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" Loaded="Window_Loaded" >
+        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" Loaded="Window_Loaded" MinWidth="800" MinHeight="450" >
+
+
     <Grid>
 
         <ui:NavigationView 
@@ -22,6 +24,8 @@
             CompactModeThresholdWidth="21600"
             ExpandedModeThresholdWidth="21600"
             >
+
+
 
             <ui:NavigationView.MenuItems>
 
@@ -57,7 +61,7 @@
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <ui:Frame x:Name="frame"></ui:Frame>
+                <ui:Frame x:Name="frame"/>
             </ScrollViewer>
         </ui:NavigationView>
     </Grid>

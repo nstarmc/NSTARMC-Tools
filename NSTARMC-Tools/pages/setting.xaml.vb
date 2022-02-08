@@ -1,4 +1,5 @@
 ﻿Imports ModernWpf
+Imports ModernWpf.Controls
 Imports WPFUI
 
 Class setting
@@ -54,6 +55,12 @@ Class setting
         Else
             sw_autoclose.IsOn = False
         End If
+
+        If My.Settings.bg = True Then
+            sw_bg.IsOn = True
+        Else
+            sw_bg.IsOn = False
+        End If
     End Sub
 
     Private Sub sw_autoclose_Toggled(sender As Object, e As RoutedEventArgs) Handles sw_autoclose.Toggled
@@ -63,6 +70,18 @@ Class setting
         Else
             My.Settings.endwhengamestart = False
             My.Settings.Save()
+        End If
+    End Sub
+
+    Private Sub sw_bg_Toggled(sender As Object, e As RoutedEventArgs) Handles sw_bg.Toggled
+        If sw_bg.IsOn = True Then
+            My.Settings.bg = True
+            My.Settings.Save()
+
+        Else
+            My.Settings.bg = False
+            My.Settings.Save()
+
         End If
     End Sub
 End Class

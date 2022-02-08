@@ -11,5 +11,11 @@
     <Setting Name="endwhengamestart" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="bg" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="sguid" Type="System.String" Scope="User">
+      <Value Profile="(Default)">nothing</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

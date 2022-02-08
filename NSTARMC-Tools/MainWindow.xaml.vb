@@ -54,5 +54,16 @@ Class MainWindow
             End If
         End If
 
+        If My.Settings.bg = True Then
+            Dim brush As New ImageBrush()
+            brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
+            frame.Background = brush
+        End If
+    End Sub
+
+    Private Sub ChangeBG()
+        Dim brush As New ImageBrush()
+        brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
+        frame.Background = brush
     End Sub
 End Class

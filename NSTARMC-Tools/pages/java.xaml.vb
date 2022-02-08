@@ -1,11 +1,13 @@
 ﻿Imports System.IO
 Imports System.Net
 Imports System.Threading
+Imports ICSharpCode.SharpZipLib.Core
+Imports ICSharpCode.SharpZipLib.Zip
 Imports ModernWpf.Controls
 
 Class java
     Dim java_ver
-    Dim DWFilename, DWUrl, DWFn, DWS '定义下载线程调用变量
+    Dim DWFilename, DWUrl, DWFn, DWS, DWDir, DWDir_up '定义下载线程调用变量
     Private Sub Page_Loaded_1(sender As Object, e As RoutedEventArgs)
         Dim homepagestart As Thread = New Thread(AddressOf Homepagestartthread)
         homepagestart.Start()
@@ -85,15 +87,19 @@ Class java
                     '放置下载内容
                     DWS = 0
                     If java_ver = 17 Then
-                        DWUrl = java_xml.<Java17>.Value
+                        DWUrl = java_xml.<Java17>.<url>.Value
+                        DWDir_up = java_xml.<Java17>.<dir>.Value
                     ElseIf java_ver = 16 Then
-                        DWUrl = java_xml.<Java16>.Value
+                        DWDir_up = java_xml.<Java16>.<dir>.Value
+                        DWUrl = java_xml.<Java16>.<url>.Value
                     ElseIf java_ver = 8 Then
-                        DWUrl = java_xml.<Java8>.Value
+                        DWDir_up = java_xml.<Java8>.<dir>.Value
+                        DWUrl = java_xml.<Java8>.<url>.Value
                     End If
 
                     DWFilename = dirlist & "\java.zip"
                     DWFn = "Java" & java_ver
+                    DWDir = dirlist
                     Dim dw_java As Thread = New Thread(AddressOf Dw_java_thread)
                     dw_java.Start()
                     card_dwinfo.Visibility = Visibility.Visible
@@ -105,7 +111,9 @@ Class java
     End Sub
 
     Private Function Dw_java_thread(ByVal objParamReport As Object) As String
-
+        If Directory.Exists(DWDir & "\jre-x64") = True Then
+            Directory.Delete(DWDir & "\jre-x64", True)
+        End If
         Try
             '下载
             Dim hwq As HttpWebRequest
@@ -167,11 +175,72 @@ Class java
             intDiff = 0
             lngCurSize = 0
             DWS = 1
+            '启动解压缩线程
+            Dim unzip_java As Thread = New Thread(AddressOf Unzip_java_thread)
+            unzip_java.Start()
         Catch ex As Exception
             dw_info.Dispatcher.Invoke(New Action(Sub()
                                                      dw_info.Text = "错误信息:" + ex.Message
                                                  End Sub))
         End Try
 
+    End Function
+    Private Function Unzip_java_thread(ByVal objParamReport As Object) As String
+        mclist.Dispatcher.Invoke(New Action(Sub()
+                                                card_unzip.Visibility = Visibility.Visible
+                                                card_dwinfo.Visibility = Visibility.Collapsed
+                                            End Sub))
+
+        Dim zf As ZipFile = Nothing
+        Try
+            Dim fs As FileStream = File.OpenRead(DWFilename)
+            zf = New ZipFile(fs)
+            For Each zipEntry As ZipEntry In zf
+                If Not zipEntry.IsFile Then     ' 忽略目录
+                    Continue For
+                End If
+                Dim entryFileName As [String] = zipEntry.Name
+                ' 从条目中删除文件夹：- entryFileName = Path.GetFileName（entryFileName）;
+                ' （可选）将条目名称与此处的选择列表匹配，以便根据需要跳过。
+                ' 解包长度在 zipEntry.Size 属性中可用.
+
+                Dim buffer As Byte() = New Byte(4095) {}    ' 4K is optimum
+                Dim zipStream As Stream = zf.GetInputStream(zipEntry)
+
+                ' Manipulate the output filename here as desired.
+                Dim fullZipToPath As [String] = Path.Combine(DWDir, entryFileName)
+                Dim directoryName As String = Path.GetDirectoryName(fullZipToPath)
+                If directoryName.Length > 0 Then
+                    Directory.CreateDirectory(directoryName)
+                End If
+
+                ' Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
+                ' of the file, but does not waste memory.
+                ' The "Using" will close the stream even if an exception occurs.
+                Using streamWriter As FileStream = File.Create(fullZipToPath)
+                    StreamUtils.Copy(zipStream, streamWriter, buffer)
+                End Using
+            Next
+        Finally
+            If zf IsNot Nothing Then
+                zf.IsStreamOwner = True     ' Makes close also shut the underlying stream
+                ' Ensure we release resources
+                zf.Close()
+
+                FileSystem.Rename(DWDir & "\" & DWDir_up, DWDir & "\jre-x64")
+                File.Delete(DWFilename)
+                mclist.Dispatcher.Invoke(New Action(Sub()
+                                                        card_unzip.Visibility = Visibility.Collapsed
+                                                        Dim dialog As ContentDialog = New ContentDialog() With {
+                                                            .Title = "Java安装成功",
+                                                            .CloseButtonText = "我知道了",
+                                                            .IsPrimaryButtonEnabled = False,
+                                                            .DefaultButton = ContentDialogButton.Close,
+                                                            .Content = "Java已经成功安装在您选择的整合包当中啦！"
+                                                        }
+                                                        dialog.ShowAsync()
+                                                        End Sub))
+                End If
+        End Try
     End Function
 End Class

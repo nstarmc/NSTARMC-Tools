@@ -88,6 +88,30 @@ Partial Friend NotInheritable Class MySettings
             Me("endwhengamestart") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+    Public Property bg() As Boolean
+        Get
+            Return CType(Me("bg"),Boolean)
+        End Get
+        Set
+            Me("bg") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("nothing")>  _
+    Public Property sguid() As String
+        Get
+            Return CType(Me("sguid"),String)
+        End Get
+        Set
+            Me("sguid") = value
+        End Set
+    End Property
 End Class
 
 Namespace My
