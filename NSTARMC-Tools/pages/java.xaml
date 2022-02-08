@@ -3,20 +3,20 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:NSTAR整合包客户端"
+      xmlns:local="clr-namespace:NSTARMC_Tools"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="java"
       xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
       xmlns:XamlHost="clr-namespace:Microsoft.Toolkit.Wpf.UI.XamlHost;assembly=Microsoft.Toolkit.Wpf.UI.XamlHost"
-      xmlns:ui="http://schemas.modernwpf.com/2019">
+      xmlns:ui="http://schemas.modernwpf.com/2019" Loaded="Page_Loaded_1">
     <Grid>
         <StackPanel>
             <TextBlock Text="自动下载" Margin="12,12,0,0"></TextBlock>
             <wpfui:CardControl Title="选择需要下载Java的游戏版本" Subtitle="工具将识别整合包对Java版本的需求，以下载对应版本Java！" Margin="12,8,16,0" Icon="List16">
-                <ComboBox>
-                    
-                </ComboBox>
+                <ComboBox x:Name="mclist"/>
+
+
             </wpfui:CardControl>
             <wpfui:CardControl Title="下载信息" Subtitle="下载未开始···" Margin="12,8,16,0" Icon="Info16">
                 <Button Content="开始下载" Margin="6,0,0,0"></Button>
