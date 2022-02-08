@@ -12,7 +12,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019">
     <Grid>
         <StackPanel>
-            <wpfui:CardExpander  Header="手动下载Java" Subtitle="前往以下网站下载Java的安装程序或其他版本。" Margin="12,18,16,0" Icon="ArrowDownload16">
+            <wpfui:CardExpander  Header="下载整合包" Subtitle="前往以下网站下载整合包&#13;日后会添加工具内下载基础整合包的功能" Margin="12,18,16,0" Icon="ArrowDownload16">
                 <StackPanel Margin="5" Orientation="Horizontal">
                     <wpfui:Hyperlink NavigateUri="https://www.mcbbs.net/thread-1025346-1-1.html" 
                                             Content="MCBBS原帖" Padding="4" Cursor="Hand"/>

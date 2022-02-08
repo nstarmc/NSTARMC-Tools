@@ -45,5 +45,9 @@ Class java
         End If
     End Function
 
+    Private Sub mclist_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles mclist.SelectionChanged
+
+    End Sub
+
 
 End Class
