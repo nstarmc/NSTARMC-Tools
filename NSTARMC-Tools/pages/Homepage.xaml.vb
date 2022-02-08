@@ -37,7 +37,7 @@ Class Homepage
             Await segmentFileDownloader.DownloadFileAsync()
             '写入bat替换脚本
             Dim file As System.IO.StreamWriter
-            file = My.Computer.FileSystem.OpenTextFileWriter(My.Application.Info.DirectoryPath & "\upd.bat", False, Encoding.ASCII)
+            file = My.Computer.FileSystem.OpenTextFileWriter(My.Application.Info.DirectoryPath & "\upd.bat", False, Encoding.GetEncoding("GB2312"))
             file.WriteLine("@echo off")
             file.WriteLine("TIMEOUT /T 1")
             file.WriteLine("taskkill /F /IM " & Replace(Me.GetType().Assembly.Location, My.Application.Info.DirectoryPath & "\", ""))
@@ -48,7 +48,7 @@ Class Homepage
             file.WriteLine("exit")
             file.Close()
             '写入bat替换脚本
-            file = My.Computer.FileSystem.OpenTextFileWriter(My.Application.Info.DirectoryPath & "\upd.vbs", False, Encoding.ASCII)
+            file = My.Computer.FileSystem.OpenTextFileWriter(My.Application.Info.DirectoryPath & "\upd.vbs", False, Encoding.GetEncoding("GB2312"))
             file.WriteLine("set shell=wscript.createObject(""wscript.shell"")")
             file.WriteLine("run=shell.Run(""" & My.Application.Info.DirectoryPath & "\upd.bat" & """,0)")
             file.Close()
