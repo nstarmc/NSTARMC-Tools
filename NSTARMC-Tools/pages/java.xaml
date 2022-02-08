@@ -18,9 +18,15 @@
 
 
             </wpfui:CardControl>
-            <wpfui:CardControl Title="下载信息" Subtitle="下载未开始···" Margin="12,8,16,0" Icon="Info16">
-                <Button Content="开始下载" Margin="6,0,0,0"></Button>
+            <wpfui:CardControl Title="下载信息" Margin="12,8,16,0" Icon="Info16" x:Name="dw_java_text">
+                <Button Content="开始下载" Margin="6,0,0,0" x:Name="bt_start"></Button>
             </wpfui:CardControl>
+            <wpfui:Card Margin="12,8,16,0" x:Name="card_dwinfo" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock x:Name="dw_info"></TextBlock>
+                    <ui:ProgressBar x:Name="dw_progressbar" Margin="5"></ui:ProgressBar>
+                </StackPanel>
+            </wpfui:Card>
             <TextBlock Text="手动下载" Margin="12,12,0,0"></TextBlock>
             <wpfui:CardExpander  Header="手动下载Java" Subtitle="前往以下网站下载Java的安装程序或其他版本。" Margin="12,18,16,0" Icon="WebAsset24">
                 <StackPanel Margin="5" Orientation="Horizontal">
