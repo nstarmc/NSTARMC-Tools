@@ -154,8 +154,7 @@ Class java
                                                              dw_info.Text = "正在下载：" & DWFn & vbCrLf &
                                                              "文件大小：" & FormatNumber(lngSize / 1024 / 1024, 2, vbTrue).ToString & " MB" &
                                                              "/" & FormatNumber(lngCurSize / 1024 / 1024, 2, vbTrue).ToString & " MB" & vbCrLf &
-                                                             "当前速度：" & CInt(lngNet / intDiff / 1024 / 1024).ToString & "MB/s" & vbCrLf &
-                                                             "注意：在文件下载时，请不要切换其它选项卡，否则会导致一系列问题！"
+                                                             "当前速度：" & CInt(lngNet / intDiff / 1024 / 1024).ToString & "MB/s"
                                                              dw_progressbar.Value = Math.Round(lngCurSize / lngSize * 100, 2)
                                                          End Sub))
                     datLast = Now

@@ -93,6 +93,9 @@ Class Homepage
                                                  notice1.Subtitle = notice.<announcement>.Value & vbCrLf & "公告发布日期：" & notice.<date>.Value
                                              End Sub))
 
+        mclist.Dispatcher.Invoke(New Action(Sub()
+                                                mclist.Items.Clear()
+                                            End Sub))
         For Each dirlist In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\")
             If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
 
@@ -113,14 +116,17 @@ Class Homepage
                                                         .CloseButtonText = "我知道了",
                                                         .IsPrimaryButtonEnabled = False,
                                                         .DefaultButton = ContentDialogButton.Close,
-                                                        .Content = "无法在工具下的File检测到有效格式的整合包！" & vbCrLf & "请正确放置整合包文件后，重启工具再试！" & vbCrLf & "如还是无法检测，请在Q群求助！"
+                                                        .Content = "无法在工具下的File检测到有效格式的整合包！" & vbCrLf & "请在左侧导航栏进入下载页面下载整合包！" & vbCrLf & "或者请正确放置整合包文件后，重启工具再试！" & vbCrLf & "如还是无法检测，请在Q群求助！"
                                                     }
                                                     dialog.ShowAsync()
+
                                                 End Sub))
 
         Else
+
             mclist.Dispatcher.Invoke(New Action(Sub()
                                                     mclist.SelectedIndex = 0
+                                                    mclist.IsEnabled = True
                                                 End Sub))
 
         End If

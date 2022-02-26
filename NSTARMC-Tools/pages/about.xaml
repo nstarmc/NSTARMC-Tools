@@ -27,7 +27,7 @@
             <wu:CardControl Title="加入Q群" Subtitle="加入qq群进行交流，建议，or just 闲聊" Margin="12,8,16,0" Icon="Group20">
                 <wu:Hyperlink Content="点击入群"  NavigateUri="http://t.cn/A6qD46L7" Padding="4" Cursor="Hand"/>
             </wu:CardControl>
-            
+
             <wpfui:CardExpander  Header="未来更新计划" Subtitle="以下为本工具计划的更新功能和内容，如果你有别的建议，可以再意见反馈页面提交" Margin="12,8,16,0" Icon="TaskListAdd20">
                 <StackPanel Margin="5" Orientation="Horizontal">
                     <TextBlock x:Name="upfu"></TextBlock>

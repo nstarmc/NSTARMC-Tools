@@ -4,38 +4,39 @@ Imports ModernWpf
 Imports WPFUI
 
 Class MainWindow
+    Dim _page_java As java = New java()
+    Dim _page_homepage As Homepage = New Homepage()
+    Dim _page_setting As setting = New setting()
+    Dim _page_about As about = New about()
+    Dim _page_download As download = New download()
+    Dim _page_list As list = New list()
+    Dim _page_feedback As feedback = New feedback()
     Private Sub NavView_SelectionChanged(sender As ModernWpf.Controls.NavigationView, args As ModernWpf.Controls.NavigationViewSelectionChangedEventArgs) Handles NavView.SelectionChanged
         If NavView.SelectedItem.Content.ToString = "首页" Then
-            Dim p1 As Homepage = New Homepage()
-            frame.Content = p1
+            frame.Content = _page_homepage
         End If
         If NavView.SelectedItem.Content.ToString = "设置" Then
-            Dim p1 As setting = New setting()
-            frame.Content = p1
+            frame.Content = _page_setting
         End If
         If NavView.SelectedItem.Content.ToString = "Java下载" Then
-            Dim p1 As java = New java()
-            frame.Content = p1
+            frame.Content = _page_java
         End If
         If NavView.SelectedItem.Content.ToString = "关于" Then
-            Dim p1 As about = New about()
-            frame.Content = p1
+            frame.Content = _page_about
         End If
         If NavView.SelectedItem.Content.ToString = "下载整合包" Then
-            Dim p1 As download = New download()
-            frame.Content = p1
+            frame.Content = _page_download
         End If
         If NavView.SelectedItem.Content.ToString = "版本列表" Then
-            Dim p1 As list = New list()
-            frame.Content = p1
+            frame.Content = _page_list
         End If
         If NavView.SelectedItem.Content.ToString = "意见反馈" Then
-            Dim p1 As feedback = New feedback()
-            frame.Content = p1
+            frame.Content = _page_feedback
         End If
     End Sub
 
     Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
+
         If My.Settings.themebysys = True Then
             If Theme.Manager.GetSystemTheme = Theme.Style.Dark Then
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark
