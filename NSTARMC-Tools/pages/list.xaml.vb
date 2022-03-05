@@ -1,9 +1,15 @@
 ﻿Imports System.Threading
 Imports ModernWpf.Controls
 Imports System.IO
+Imports System.Net
+Imports Newtonsoft.Json.Linq
+Imports Newtonsoft.Json
+Imports ICSharpCode.SharpZipLib.Zip
+Imports ICSharpCode.SharpZipLib.Core
 
 Class list
     Dim del_dir
+    Dim local_id, url_online, year_ol, month_ol, day_ol, year_l, month_l, day_l, upd_dir '定义更新部分使用变量
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
         Dim homepagestart As Thread = New Thread(AddressOf Homepagestartthread)
         homepagestart.Start()
@@ -41,6 +47,7 @@ Class list
 
         Else
             mclist.Dispatcher.Invoke(New Action(Sub()
+                                                    mclist.IsEnabled = True
                                                     mclist.SelectedIndex = 0
                                                 End Sub))
 
@@ -62,8 +69,65 @@ Class list
                                                             "模组加载器：" & info_xml.<modloader>.Value & vbCrLf &
                                                             "光影加载器：" & info_xml.<sharder>.Value & vbCrLf &
                                                             "打包日期：" & info_xml.<packdate>.<year>.Value & "年" & info_xml.<packdate>.<month>.Value & "月" & info_xml.<packdate>.<day>.Value & "日" & vbCrLf &
-                                                            "整合包ID（日后检查更新用）：" & info_xml.<packid>.Value
+                                                            "整合包ID：" & info_xml.<packid>.Value
                                                         End Sub))
+                    '从资源服务器获取该版本信息
+                    '发送get请求，请求版本表
+                    Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/packlist.json")
+                    request.Method = "GET"
+                    Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+                    Dim jsonback = sr.ReadToEnd '储存返回的json信息
+                    '处理json
+                    Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+                    For Each x In json("group")
+                        mclist.Dispatcher.Invoke(New Action(Sub()
+                                                                For Each x2 In json("group")(0)("list")
+                                                                    Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
+                                                                    If json2("id").ToString > 10000 Then
+                                                                        If json2("id").ToString < 20000 Then
+                                                                            If json2("id").ToString = Int(info_xml.<packid>.Value) Then
+                                                                                year_ol = json2("update_time")("year").ToString
+                                                                                month_ol = json2("update_time")("month").ToString
+                                                                                day_ol = json2("update_time")("date").ToString
+                                                                                url_online = json2("download")
+                                                                                Exit For
+                                                                            End If
+                                                                        End If
+                                                                    End If
+
+                                                                Next
+                                                            End Sub))
+                    Next
+
+                    '比对本地与服务器日期
+                    Dim update_yes = 0
+                    If Int(year_ol) > Int(info_xml.<packdate>.<year>.Value.ToString) Then
+                        update_yes = 1
+                    Else
+                        If Int(month_ol) > Int(info_xml.<packdate>.<month>.Value.ToString) Then
+                            update_yes = 1
+                        Else
+                            If Int(month_ol) = Int(info_xml.<packdate>.<month>.Value.ToString) And Int(day_ol) > Int(info_xml.<packdate>.<day>.Value.ToString) Then
+                                update_yes = 1
+                            Else
+                                update_yes = 0
+                            End If
+                        End If
+                    End If
+                    If update_yes = 1 Then
+                        '检测到更新，弹窗
+                        mclist.Dispatcher.Invoke(New Action(Sub()
+                                                                verinfolabel.Content += vbCrLf & "该版本整合包存在新版本！"
+                                                                Dim dialog As ContentDialog = New ContentDialog() With {
+                                                                    .Title = "有新的整合包版本！",
+                                                                    .CloseButtonText = "我知道啦",
+                                                                    .DefaultButton = ContentDialogButton.Close,
+                                                                    .Content = "检测到选中的整合包有新的版本！" & vbCrLf & "建议前往版本列表页面更新整合包~" & vbCrLf & "如果数据重要，建议先备份哦~"
+                                                                }
+                                                                dialog.ShowAsync()
+
+                                                            End Sub))
+                    End If
                 End If
 
             End If
@@ -159,5 +223,368 @@ Class list
             homepagestart.Start()
         End Try
 
+    End Function
+
+    Private Sub bt_upver_Click(sender As Object, e As RoutedEventArgs) Handles bt_upver.Click
+        If upd_card.Visibility = Visibility.Collapsed Then
+            upd_card.Visibility = Visibility.Visible
+            Dim list As Thread = New Thread(AddressOf Listver)
+            list.Start()
+        Else
+            upd_card.Visibility = Visibility.Collapsed
+        End If
+    End Sub
+    Private Function Listver(ByVal objParamReport As Object) As String
+        '发送get请求，请求版本表
+        Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/packlist.json")
+        request.Method = "GET"
+        Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+        Dim jsonback = sr.ReadToEnd '储存返回的json信息
+        '处理json
+        Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+
+        '遍历读取类别
+
+        For Each x In json("group")
+            mclist.Dispatcher.Invoke(New Action(Sub()
+                                                    choose_ver.Items.Clear()
+                                                    For Each x2 In json("group")(0)("list")
+                                                        Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
+                                                        If json2("id").ToString > 10000 Then
+                                                            If json2("id").ToString < 20000 Then
+                                                                choose_ver.Items.Add(json2("version"))
+                                                            End If
+                                                        End If
+
+                                                    Next
+                                                    choose_ver.SelectedIndex = 0
+
+                                                End Sub))
+        Next
+    End Function
+
+    Private Sub bt_upd_Click(sender As Object, e As RoutedEventArgs) Handles bt_upd.Click
+        Dim upd As Thread = New Thread(AddressOf Upd_ver)
+        upd.Start()
+    End Sub
+    Private Function Upd_ver(ByVal objParamReport As Object) As String
+
+        '第一步，比对本地与服务器的日期，检查更新
+
+        '获取本地整合包ID
+        For Each dirlist In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\")
+            If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
+                '检测到文件夹内为符合格式的整合包，查找ID
+                Dim info_reader As String = My.Computer.FileSystem.ReadAllText(dirlist & "\info.xml")
+                Dim info_xml As XElement = XElement.Parse(info_reader)
+                mclist.Dispatcher.Invoke(New Action(Sub()
+                                                        If mclist.SelectedItem = info_xml.<mcversion>.Value & " - " & info_xml.<modloader>.Value & "(" & info_xml.<sharder>.Value & ")" Then
+                                                            local_id = info_xml.<packid>.Value
+                                                            year_l = info_xml.<packdate>.<year>.Value.ToString
+                                                            month_l = info_xml.<packdate>.<month>.Value.ToString
+                                                            day_l = info_xml.<packdate>.<day>.Value.ToString
+                                                            upd_dir = dirlist
+                                                        End If
+                                                    End Sub))
+
+            End If
+        Next
+
+        '从资源服务器获取该版本信息
+        '发送get请求，请求版本表
+        Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/packlist.json")
+        request.Method = "GET"
+        Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+        Dim jsonback = sr.ReadToEnd '储存返回的json信息
+        '处理json
+        Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+        For Each x In json("group")
+            mclist.Dispatcher.Invoke(New Action(Sub()
+                                                    For Each x2 In json("group")(0)("list")
+                                                        Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
+                                                        If json2("id").ToString > 10000 Then
+                                                            If json2("id").ToString < 20000 Then
+                                                                If json2("id").ToString = local_id Then
+                                                                    year_ol = json2("update_time")("year").ToString
+                                                                    month_ol = json2("update_time")("month").ToString
+                                                                    day_ol = json2("update_time")("date").ToString
+                                                                    url_online = json2("download")
+                                                                    Exit For
+                                                                End If
+                                                            End If
+                                                        End If
+
+                                                    Next
+                                                End Sub))
+        Next
+
+        '比对本地与服务器日期
+        Dim update_yes = 0
+        If Int(year_ol) > Int(year_l) Then
+            update_yes = 1
+        Else
+            If Int(month_ol) > Int(month_l) Then
+                update_yes = 1
+            Else
+                If Int(month_ol) = Int(month_l) And Int(day_ol) > Int(day_l) Then
+                    update_yes = 1
+                Else
+                    update_yes = 0
+                End If
+            End If
+        End If
+        If update_yes = 1 Then
+            '检测到更新，弹窗确认
+            mclist.Dispatcher.Invoke(New Action(Async Sub()
+
+
+                                                    Dim dialog As ContentDialog = New ContentDialog() With {
+                                                        .Title = "确认更新整合包？",
+                                                        .CloseButtonText = "取消",
+                                                        .PrimaryButtonText = "开始更新",
+                                                        .DefaultButton = ContentDialogButton.Primary,
+                                                        .Content = "我们即将为您更新整合包" & vbCrLf & "更新后您的数据会被保留" & vbCrLf & "如果数据重要，建议先备份哦~"
+                                                    }
+                                                    Dim result As ContentDialogResult = Await dialog.ShowAsync()
+                                                    If result = ContentDialogResult.Primary Then
+                                                        '执行更新
+                                                        Dim upd As Thread = New Thread(AddressOf Upd_ver_main)
+                                                        upd.Start()
+                                                    End If
+                                                End Sub))
+        Else
+
+            '没有更新，弹窗提示
+            mclist.Dispatcher.Invoke(New Action(Sub()
+                                                    Dim dialog As ContentDialog = New ContentDialog() With {
+                                                                                                            .Title = "没有更新",
+                                                                                                            .CloseButtonText = "我知道啦",
+                                                                                                            .DefaultButton = ContentDialogButton.Close,
+                                                                                                            .Content = "当前选中版本没有新版本哦~"
+                                                                                                        }
+                                                    dialog.ShowAsync()
+                                                End Sub))
+        End If
+    End Function
+    '更新线程
+    Private Function Upd_ver_main(ByVal objParamReport As Object) As String
+        mclist.Dispatcher.Invoke(New Action(Sub()
+                                                dw_card.Visibility = Visibility.Visible
+                                                dw_pro.Visibility = Visibility.Visible
+                                            End Sub))
+        Try
+            Directory.Delete(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd", True)
+        Catch ex As Exception
+
+        End Try
+        Try
+
+            '下载
+            Dim hwq As HttpWebRequest
+            Dim hwp As HttpWebResponse
+            Dim colHeader As WebHeaderCollection  '响应头信息集合
+            Dim lngSize As Int64                  '要下载文件的总大小
+            Dim lngCurSize As Int64               '已经下载大小
+            Dim lngNet As Int64                   '计算网速用
+
+            Dim stRespones As Stream              '响应流
+            Dim st As FileStream                  '本地流
+            Dim intCurSize As Int64
+            Dim bytBuffer(512) As Byte           '缓存大小
+
+            Dim datLast As DateTime               '最后一次时间
+            Dim intDiff As Int32                  '两次时间差（秒）
+
+            datLast = Now   '取得开始时间
+            hwq = CType(HttpWebRequest.Create(url_online.ToString), HttpWebRequest) '请求对象创建
+            hwp = hwq.GetResponse        '取得响应对象
+            colHeader = hwp.Headers      '取得响应头
+            lngSize = colHeader.Get("Content-Length")  '取得要下载文件的大小
+
+            stRespones = hwp.GetResponseStream '取得响应流
+            st = New FileStream(My.Application.Info.DirectoryPath & "\file\update_download.zip", FileMode.Create) '本地保存文件
+
+            intCurSize = stRespones.Read(bytBuffer, 0, bytBuffer.Length) '响应流中读取
+
+            Do While (intCurSize > 0) '只要有数据就继续
+                st.Write(bytBuffer, 0, intCurSize)     '写入本地文件
+                intDiff = DateDiff(DateInterval.Second, datLast, Now)
+
+
+                lngCurSize = lngCurSize + intCurSize
+                lngNet = lngNet + intCurSize              '单位时间内的下载量
+                If intDiff >= 1 Then
+                    dw_info.Dispatcher.Invoke(New Action(Sub()
+                                                             dw_info.Text =
+                                                         "文件大小：" & FormatNumber(lngSize / 1024 / 1024, 2, vbTrue).ToString & " MB" &
+                                                         "/" & FormatNumber(lngCurSize / 1024 / 1024, 2, vbTrue).ToString & " MB" & vbCrLf &
+                                                         "当前速度：" & Math.Round(lngNet / intDiff / 1024 / 1024, 2).ToString & "MB/s"
+                                                             dw_pro.Value = Math.Round(lngCurSize / lngSize * 100, 2)
+                                                         End Sub))
+                    datLast = Now
+                    lngNet = 0
+                End If
+                intCurSize = stRespones.Read(bytBuffer, 0, bytBuffer.Length) '继续读取
+            Loop
+            st.Close()
+            stRespones.Close()
+            dw_info.Dispatcher.Invoke(New Action(Sub()
+                                                     dw_info.Text = "下载完成"
+                                                     dw_pro.Visibility = Visibility.Collapsed
+                                                 End Sub))
+            lngSize = 0
+            lngCurSize = 0
+            lngNet = 0
+            intDiff = 0
+            lngCurSize = 0
+
+            '下载完成，进入解压处理
+            dw_info.Dispatcher.Invoke(New Action(Sub()
+                                                     dw_info.Text = "正在进行解压···"
+                                                 End Sub))
+            Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd")
+            Dim zf As ZipFile = Nothing
+            Try
+                Dim fs As FileStream = File.OpenRead(My.Application.Info.DirectoryPath & "\file\update_download.zip")
+                zf = New ZipFile(fs)
+                For Each zipEntry As ZipEntry In zf
+                    If Not zipEntry.IsFile Then     ' 忽略目录
+                        Continue For
+                    End If
+                    Dim entryFileName As [String] = zipEntry.Name
+                    ' 从条目中删除文件夹：- entryFileName = Path.GetFileName（entryFileName）;
+                    ' （可选）将条目名称与此处的选择列表匹配，以便根据需要跳过。
+                    ' 解包长度在 zipEntry.Size 属性中可用.
+
+                    Dim buffer As Byte() = New Byte(4095) {}    ' 4K is optimum
+                    Dim zipStream As Stream = zf.GetInputStream(zipEntry)
+
+                    ' Manipulate the output filename here as desired.
+                    Dim fullZipToPath As [String] = Path.Combine(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd", entryFileName)
+                    Dim directoryName As String = Path.GetDirectoryName(fullZipToPath)
+                    If directoryName.Length > 0 Then
+                        Directory.CreateDirectory(directoryName)
+                    End If
+
+                    ' Unzip file in buffered chunks. This is just as fast as unpacking to a buffer the full size
+                    ' of the file, but does not waste memory.
+                    ' The "Using" will close the stream even if an exception occurs.
+                    Using streamWriter As FileStream = File.Create(fullZipToPath)
+                        StreamUtils.Copy(zipStream, streamWriter, buffer)
+                    End Using
+                Next
+            Finally
+                If zf IsNot Nothing Then
+                    zf.IsStreamOwner = True     ' Makes close also shut the underlying stream
+                    ' Ensure we release resources
+                    zf.Close()
+                    '解压完成
+                    dw_info.Dispatcher.Invoke(New Action(Sub()
+                                                             dw_info.Text = "正在删除旧版整合包资源···"
+                                                         End Sub))
+                    Try
+                        '——————删掉旧的——————
+                        If Directory.Exists(upd_dir & "\.minecraft\mods\") Then
+                            For Each d As String In Directory.GetFileSystemEntries(upd_dir & "\.minecraft\mods\")
+                                If File.Exists(d) Then
+                                    Dim [me] As String = Path.GetFileNameWithoutExtension(d)
+                                    If [me].StartsWith("[##模组##]") Then
+                                        File.Delete(d)
+                                    End If
+                                End If
+                            Next
+                        End If
+
+                        If Directory.Exists(upd_dir & "\.minecraft\shaderpacks\") Then
+                            For Each d As String In Directory.GetFileSystemEntries(upd_dir & "\.minecraft\shaderpacks\")
+                                If File.Exists(d) Then
+                                    Dim [me] As String = Path.GetFileNameWithoutExtension(d)
+                                    If [me].StartsWith("[##光影##]") Then
+                                        File.Delete(d)
+                                    End If
+                                End If
+                            Next
+                        End If
+
+                        If Directory.Exists(upd_dir & "\.minecraft\resourcepacks\") Then
+                            For Each d As String In Directory.GetFileSystemEntries(upd_dir & "\.minecraft\resourcepacks\")
+                                If File.Exists(d) Then
+                                    Dim [me] As String = Path.GetFileNameWithoutExtension(d)
+                                    If [me].StartsWith("[##资源包##]") Then
+                                        File.Delete(d)
+                                    End If
+                                End If
+                            Next
+                        End If
+
+                        dw_info.Dispatcher.Invoke(New Action(Sub()
+                                                                 dw_info.Text = "正在更新整合包资源···"
+                                                             End Sub))
+                        '——————删掉旧的——————
+                        '复制文件
+                        For Each Dir_list In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd\file\")
+                            If Directory.Exists(upd_dir & "\.minecraft\mods\") Then
+                                '确保文件夹存在
+                                Directory.CreateDirectory(Dir_list & "\.minecraft\mods\")
+                                For Each file_list In System.IO.Directory.GetFiles(Dir_list & "\.minecraft\mods\")
+                                    Dim file_name_org
+                                    file_name_org = Replace(file_list, Dir_list & "\.minecraft\mods\", "")
+                                    File.Copy(file_list, upd_dir & "\.minecraft\mods\" & file_name_org, True)
+                                Next
+                            End If
+
+                        Next
+
+                        For Each Dir_list In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd\file\")
+                            If Directory.Exists(upd_dir & "\.minecraft\shaderpacks\") Then
+                                Directory.CreateDirectory(Dir_list & "\.minecraft\shaderpacks\")
+                                For Each file_list In System.IO.Directory.GetFiles(Dir_list & "\.minecraft\shaderpacks\")
+                                    Dim file_name_org
+                                    file_name_org = Replace(file_list, Dir_list & "\.minecraft\shaderpacks\", "")
+                                    File.Copy(file_list, upd_dir & "\.minecraft\shaderpacks\" & file_name_org, True)
+                                Next
+                            End If
+
+                        Next
+
+                        For Each Dir_list In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd\file\")
+                            If Directory.Exists(Dir_list & "\.minecraft\resourcepacks\") Then
+                                Directory.CreateDirectory(upd_dir & "\.minecraft\resourcepacks\")
+                                For Each file_list In System.IO.Directory.GetFiles(Dir_list & "\.minecraft\resourcepacks\")
+                                    Dim file_name_org
+                                    file_name_org = Replace(file_list, Dir_list & "\.minecraft\resourcepacks\", "")
+                                    File.Copy(file_list, upd_dir & "\.minecraft\resourcepacks\" & file_name_org, True)
+                                Next
+                            End If
+
+                        Next
+
+                        For Each Dir_list In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd\file\")
+                            File.Copy(Dir_list & "\info.xml", upd_dir & "\info.xml", True)
+                        Next
+                    Catch ex As Exception
+
+                    End Try
+                    dw_info.Dispatcher.Invoke(New Action(Sub()
+                                                             dw_info.Text = "资源更新完成，正在删除多余的文件···"
+                                                         End Sub))
+                    Directory.Delete(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd", True)
+                    File.Delete(My.Application.Info.DirectoryPath & "\file\update_download.zip")
+                    dw_info.Dispatcher.Invoke(New Action(Sub()
+                                                             dw_card.Visibility = Visibility.Collapsed
+                                                             Dim dialog As ContentDialog = New ContentDialog() With {
+                                                                                                            .Title = "更新完成",
+                                                                                                            .CloseButtonText = "我知道啦",
+                                                                                                            .DefaultButton = ContentDialogButton.Close,
+                                                                                                            .Content = "您选择的整合包已更新到最新版本~"
+                                                                                                        }
+                                                             dialog.ShowAsync()
+                                                         End Sub))
+
+                End If
+            End Try
+        Catch ex As Exception
+
+        End Try
     End Function
 End Class

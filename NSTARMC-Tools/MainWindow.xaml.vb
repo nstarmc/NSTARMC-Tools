@@ -15,6 +15,7 @@ Class MainWindow
         If NavView.SelectedItem.Content.ToString = "首页" Then
             frame.Content = _page_homepage
         End If
+
         If NavView.SelectedItem.Content.ToString = "设置" Then
             frame.Content = _page_setting
         End If

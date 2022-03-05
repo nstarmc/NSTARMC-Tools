@@ -92,9 +92,12 @@ Class download
                                                            If json("group")(0)("name") = downlod_group.SelectedItem Then
                                                                For Each x2 In json("group")(0)("list")
                                                                    Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
-                                                                   down_url = json2("download")
-                                                                   packid = json2("id")
-                                                                   down_ver = json2("version")
+                                                                   If json2("version") = list_ver.SelectedItem Then
+                                                                       down_url = json2("download")
+                                                                       packid = json2("id")
+                                                                       down_ver = json2("version")
+                                                                   End If
+
                                                                Next
                                                            End If
 
@@ -127,6 +130,8 @@ Class download
                                                         .Content = "本地文件夹已经存在相应版本整合包！" & vbCrLf & "请不要重复下载哦~"
                                                             }
                                                            dialog.ShowAsync()
+                                                           dw_info.Text = "没有正在进行的下载任务哦~"
+                                                           dw_pro.IsActive = False
                                                        End Sub))
         Else
 
@@ -243,7 +248,7 @@ Class download
                     For Each Dirfile In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctools\file\")
                         Directory.Move(Dirfile, My.Application.Info.DirectoryPath & "\file\" & down_ver & "_" & Now.Year & Now.Month & Now.Day & "\")
                     Next
-                    Directory.Delete(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctools\file\", True)
+                    Directory.Delete(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctools\", True)
                     File.Delete(My.Application.Info.DirectoryPath & "\file\download.zip")
                     dw_info.Dispatcher.Invoke(New Action(Sub()
                                                              dw_info.Text = "下载完成啦~"

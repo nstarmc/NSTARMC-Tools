@@ -21,9 +21,31 @@
                 <StackPanel>
                     <TextBlock Text="操作" FontSize="14" Margin="0,0,0,4"></TextBlock>
                     <StackPanel Orientation="Horizontal">
+                        <Button Content="更新整合包" HorizontalAlignment="Left" Margin="0,0,20,2" x:Name="bt_upd" Style="{StaticResource AccentButtonStyle}"/>
                         <Button Content="删除整合包" HorizontalAlignment="Left" Margin="0,0,20,2" x:Name="bt_delpack"/>
                         <Button Content="打开整合包文件夹" HorizontalAlignment="Left" Margin="0,0,20,2" x:Name="bt_opdir"/>
+                        <Button Content="转换整合包版本" HorizontalAlignment="Left" Margin="0,0,20,2" x:Name="bt_upver"/>
                     </StackPanel>
+                </StackPanel>
+            </wu:Card>
+            <wu:Card Margin="12,12,16,0" Visibility="Collapsed" x:Name="upd_card">
+                <StackPanel>
+                    <TextBlock Text="转换整合包版本（该功能尚未完成）"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Content="仅保留存档" IsChecked="True"></RadioButton>
+                        <RadioButton Content="保留全部设置"></RadioButton>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="请选择转换目标版本："/>
+                        <ComboBox x:Name="choose_ver"/>
+                    </StackPanel>
+                    <Button Content="开始转换"/>
+                </StackPanel>
+            </wu:Card>
+            <wu:Card Margin="12,12,16,0" Visibility="Collapsed" x:Name="dw_card">
+                <StackPanel>
+                <TextBlock Text="下载任务初始化中~" x:Name="dw_info"/>
+                <ui:ProgressBar x:Name="dw_pro"/>
                 </StackPanel>
             </wu:Card>
         </StackPanel>

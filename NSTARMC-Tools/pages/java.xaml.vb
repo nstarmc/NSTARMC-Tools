@@ -45,6 +45,7 @@ Class java
 
         Else
             mclist.Dispatcher.Invoke(New Action(Sub()
+                                                    mclist.IsEnabled = True
                                                     mclist.SelectedIndex = 0
                                                 End Sub))
 

@@ -23,6 +23,7 @@
             PaneDisplayMode="Left"
             CompactModeThresholdWidth="21600"
             ExpandedModeThresholdWidth="21600"
+            
             >
 
 
