@@ -11,12 +11,15 @@ Class MainWindow
     Dim _page_download As download = New download()
     Dim _page_list As list = New list()
     Dim _page_feedback As feedback = New feedback()
+    Dim _page_help As help = New help()
     Private Sub NavView_SelectionChanged(sender As ModernWpf.Controls.NavigationView, args As ModernWpf.Controls.NavigationViewSelectionChangedEventArgs) Handles NavView.SelectionChanged
         If NavView.SelectedItem.Content.ToString = "首页" Then
             frame.Content = _page_homepage
         End If
-
-        If NavView.SelectedItem.Content.ToString = "设置" Then
+        If NavView.SelectedItem.Content.ToString = "帮助" Then
+            frame.Content = _page_help
+        End If
+        If NavView.SelectedItem.Content.ToString = "设置" Or NavView.SelectedItem.Content.ToString = "Settings" Then
             frame.Content = _page_setting
         End If
         If NavView.SelectedItem.Content.ToString = "Java下载" Then

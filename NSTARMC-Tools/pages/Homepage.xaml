@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:NSTAR整合包客户端"
+      xmlns:local="clr-namespace:NSTARMC_Tools"
       mc:Ignorable="d" 
       xmlns:ui="http://schemas.modernwpf.com/2019"
       d:DesignHeight="450" d:DesignWidth="800"
@@ -14,6 +14,7 @@
             <wu:CardControl Title="发现新版本" Subtitle="正在下载新版本整合包工具，请稍等···"  Margin="12,12,16,0" x:Name="upinfo" Icon="New16" Visibility="Collapsed">
                 <ui:ProgressRing Visibility="Visible" IsActive="True" x:Name="ring1"/>
             </wu:CardControl>
+            <wu:CardControl Margin="12,12,16,0" Icon="Thinking20" x:Name="one_say_card" Title="一言" Subtitle="loading···" />
             <wu:CardControl Title="公告" Subtitle="公告加载中···"  Margin="12,12,16,0" x:Name="notice1" Icon="Note16"/>
            
             <wu:CardControl Title="选择版本" Subtitle="选择你想启动的版本。"  Margin="12,12,16,0" Icon="List16" x:Name="card_list">

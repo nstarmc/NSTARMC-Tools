@@ -85,13 +85,36 @@ Class Homepage
         End If
 
     End Function
+    Private Function onesay_thr(ByVal objParamReport As Object) As String
+        Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/onesay.json")
+        request.Method = "GET"
+        Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+        Dim jsonback = sr.ReadToEnd '储存返回的json信息
+        '处理json
+        Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+        Dim onesay_list(888)
+        Dim i = 0
+        For Each x In json("onesay")
+            onesay_list(i) = x
+            i = i + 1
+        Next
 
+        notice1.Dispatcher.Invoke(New Action(Sub()
+                                                 Dim MyValue As Integer
+                                                 Randomize()
+                                                 MyValue = CInt(Int((i * Rnd()) + 0))
+                                                 one_say_card.Subtitle = onesay_list(MyValue)
+                                             End Sub))
+    End Function
 
     Private Function Homepagestartthread(ByVal objParamReport As Object) As String
 
         '检查工具更新
         Dim checkupdate As Thread = New Thread(AddressOf CheckupdatethreadAsync)
         checkupdate.Start()
+        '检查工具更新
+        Dim onesay As Thread = New Thread(AddressOf onesay_thr)
+        onesay.Start()
         '获取公告内容
         '发送get请求，获取xml
         Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/notice.xml")

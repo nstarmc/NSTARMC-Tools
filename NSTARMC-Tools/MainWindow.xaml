@@ -50,6 +50,11 @@
                         <ui:FontIcon FontFamily="{StaticResource SegoeFluentIcons}" Glyph="&#xE118;"></ui:FontIcon>
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="帮助">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon FontFamily="{StaticResource SegoeFluentIcons}" Glyph="&#xE11B;"/>
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem Content="意见反馈">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="{StaticResource iconfont}" Glyph="&#xe7d7;"/>

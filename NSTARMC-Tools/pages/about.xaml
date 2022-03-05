@@ -30,12 +30,12 @@
 
             <wpfui:CardExpander  Header="未来更新计划" Subtitle="以下为本工具计划的更新功能和内容，如果你有别的建议，可以再意见反馈页面提交" Margin="12,8,16,0" Icon="TaskListAdd20">
                 <StackPanel Margin="5" Orientation="Horizontal">
-                    <TextBlock x:Name="upfu"></TextBlock>
+                    <TextBlock Text="加载中···" x:Name="upfu"></TextBlock>
                 </StackPanel>
             </wpfui:CardExpander>
-            <wpfui:CardExpander  Header="更新日志" Subtitle="以下为本工具的更新日志" Margin="12,8,16,8" Icon="History16">
+            <wpfui:CardExpander  Header="更新日志"  Subtitle="以下为本工具的更新日志" Margin="12,8,16,8" Icon="History16">
                 <StackPanel Margin="5" Orientation="Horizontal">
-                    <TextBlock x:Name="uphist"></TextBlock>
+                    <TextBlock Text="加载中···" x:Name="uphist"></TextBlock>
                 </StackPanel>
             </wpfui:CardExpander>
         </StackPanel>
