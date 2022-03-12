@@ -30,7 +30,7 @@
 
             <ui:NavigationView.MenuItems>
 
-                <ui:NavigationViewItem Content="首页" IsSelected="True">
+                <ui:NavigationViewItem Content="首页" IsSelected="True" Background="{x:Null}">
                     <ui:NavigationViewItem.Icon>
                         <ui:FontIcon FontFamily="{StaticResource SegoeFluentIcons}" Glyph="&#xE10F;"></ui:FontIcon>
                     </ui:NavigationViewItem.Icon>
@@ -66,7 +66,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="{x:Null}">
                 <ui:Frame x:Name="frame"/>
             </ScrollViewer>
         </ui:NavigationView>

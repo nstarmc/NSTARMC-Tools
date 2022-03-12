@@ -142,6 +142,7 @@ Class download
     End Function
 
     Private Function Dwfile_thread(ByVal objParamReport As Object) As String
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
         Try
 
             '下载
@@ -183,7 +184,7 @@ Class download
                                                              dw_info.Text =
                                                          "文件大小：" & FormatNumber(lngSize / 1024 / 1024, 2, vbTrue).ToString & " MB" &
                                                          "/" & FormatNumber(lngCurSize / 1024 / 1024, 2, vbTrue).ToString & " MB" & vbCrLf &
-                                                         "当前速度：" & CInt(lngNet / intDiff / 1024 / 1024).ToString & "MB/s"
+                                                         "当前速度：" & Math.Round(lngNet / intDiff / 1024 / 1024, 2).ToString & "MB/s"
                                                              dw_pro.IsEnabled = True
                                                          End Sub))
                     datLast = Now

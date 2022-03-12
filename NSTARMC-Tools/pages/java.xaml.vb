@@ -112,6 +112,7 @@ Class java
     End Sub
 
     Private Function Dw_java_thread(ByVal objParamReport As Object) As String
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
         If Directory.Exists(DWDir & "\jre-x64") = True Then
             Directory.Delete(DWDir & "\jre-x64", True)
         End If
@@ -155,7 +156,7 @@ Class java
                                                              dw_info.Text = "正在下载：" & DWFn & vbCrLf &
                                                              "文件大小：" & FormatNumber(lngSize / 1024 / 1024, 2, vbTrue).ToString & " MB" &
                                                              "/" & FormatNumber(lngCurSize / 1024 / 1024, 2, vbTrue).ToString & " MB" & vbCrLf &
-                                                             "当前速度：" & CInt(lngNet / intDiff / 1024 / 1024).ToString & "MB/s"
+                                                             "当前速度：" & Math.Round(lngNet / intDiff / 1024 / 1024, 2).ToString & "MB/s"
                                                              dw_progressbar.Value = Math.Round(lngCurSize / lngSize * 100, 2)
                                                          End Sub))
                     datLast = Now

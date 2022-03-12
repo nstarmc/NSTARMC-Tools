@@ -70,5 +70,6 @@ Class MainWindow
         Dim brush As New ImageBrush()
         brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
         frame.Background = brush
+        frame.Background.Opacity = 50
     End Sub
 End Class

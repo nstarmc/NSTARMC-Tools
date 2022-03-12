@@ -377,6 +377,7 @@ Class list
         Catch ex As Exception
 
         End Try
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
         Try
 
             '下载

@@ -9,6 +9,7 @@
     <RootNamespace>NSTARMC_Tools</RootNamespace>
     <AssemblyName>NSTARMC-Tools</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <SatelliteResourceLanguages>zh-CN</SatelliteResourceLanguages>
     <MyType>Custom</MyType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -226,7 +227,7 @@
       <Version>1.0.1133-prerelease</Version>
     </PackageReference>
     <PackageReference Include="ModernWpfUI">
-      <Version>0.9.4</Version>
+        <Version>0.9.4</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>

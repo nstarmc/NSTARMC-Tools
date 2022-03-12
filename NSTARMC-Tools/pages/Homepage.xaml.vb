@@ -170,6 +170,7 @@ Class Homepage
             If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
 
                 '检测到文件夹内为符合格式的整合包，加载
+                Dim ol_ok = 0
                 Dim info_reader As String = My.Computer.FileSystem.ReadAllText(dirlist & "\info.xml")
                 Dim info_xml As XElement = XElement.Parse(info_reader)
                 If mclist.SelectedItem = info_xml.<mcversion>.Value & " - " & info_xml.<modloader>.Value & "(" & info_xml.<sharder>.Value & ")" Then
@@ -197,6 +198,7 @@ Class Homepage
                                                                     If json2("id").ToString > 10000 Then
                                                                         If json2("id").ToString < 20000 Then
                                                                             If json2("id").ToString = Int(info_xml.<packid>.Value) Then
+                                                                                ol_ok = 1
                                                                                 year_ol = json2("update_time")("year").ToString
                                                                                 month_ol = json2("update_time")("month").ToString
                                                                                 day_ol = json2("update_time")("date").ToString
@@ -209,37 +211,39 @@ Class Homepage
                                                                 Next
                                                             End Sub))
                     Next
-
-                    '比对本地与服务器日期
-                    Dim update_yes = 0
-                    If Int(year_ol) > Int(info_xml.<packdate>.<year>.Value.ToString) Then
-                        update_yes = 1
-                    Else
-                        If Int(month_ol) > Int(info_xml.<packdate>.<month>.Value.ToString) Then
+                    If ol_ok = 1 Then
+                        '比对本地与服务器日期
+                        Dim update_yes = 0
+                        If Int(year_ol) > Int(info_xml.<packdate>.<year>.Value.ToString) Then
                             update_yes = 1
                         Else
-                            If Int(month_ol) = Int(info_xml.<packdate>.<month>.Value.ToString) And Int(day_ol) > Int(info_xml.<packdate>.<day>.Value.ToString) Then
+                            If Int(month_ol) > Int(info_xml.<packdate>.<month>.Value.ToString) Then
                                 update_yes = 1
                             Else
-                                update_yes = 0
+                                If Int(month_ol) = Int(info_xml.<packdate>.<month>.Value.ToString) And Int(day_ol) > Int(info_xml.<packdate>.<day>.Value.ToString) Then
+                                    update_yes = 1
+                                Else
+                                    update_yes = 0
+                                End If
                             End If
                         End If
-                    End If
-                    If update_yes = 1 Then
-                        '检测到更新，弹窗
-                        mclist.Dispatcher.Invoke(New Action(Sub()
+                        If update_yes = 1 Then
+                            '检测到更新，弹窗
+                            mclist.Dispatcher.Invoke(New Action(Sub()
 
-                                                                verinfolabel.Content += vbCrLf & "该版本整合包存在新版本！"
-                                                                Dim dialog As ContentDialog = New ContentDialog() With {
-                                                                    .Title = "有新的整合包版本！",
-                                                                    .CloseButtonText = "我知道啦",
-                                                                    .DefaultButton = ContentDialogButton.Close,
-                                                                    .Content = "检测到选中的整合包有新的版本！" & vbCrLf & "建议前往版本列表页面更新整合包~" & vbCrLf & "如果数据重要，建议先备份哦~"
-                                                                }
-                                                                dialog.ShowAsync()
+                                                                    verinfolabel.Content += vbCrLf & "该版本整合包存在新版本！"
+                                                                    Dim dialog As ContentDialog = New ContentDialog() With {
+                                                                        .Title = "有新的整合包版本！",
+                                                                        .CloseButtonText = "我知道啦",
+                                                                        .DefaultButton = ContentDialogButton.Close,
+                                                                        .Content = "检测到选中的整合包有新的版本！" & vbCrLf & "建议前往版本列表页面更新整合包~" & vbCrLf & "如果数据重要，建议先备份!"
+                                                                    }
+                                                                    dialog.ShowAsync()
 
-                                                            End Sub))
+                                                                End Sub))
+                        End If
                     End If
+
                 End If
 
             End If
