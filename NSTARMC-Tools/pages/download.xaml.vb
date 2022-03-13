@@ -108,6 +108,7 @@ Class download
         Next
 
         '检查本地是否存在相应ID整合包
+        allow_download = 0
         For Each dirlist In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\")
             If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
 

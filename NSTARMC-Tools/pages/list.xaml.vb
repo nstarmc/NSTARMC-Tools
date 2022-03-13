@@ -72,7 +72,8 @@ Class list
                                                             "整合包ID：" & info_xml.<packid>.Value
                                                         End Sub))
                     '从资源服务器获取该版本信息
-                    Dim ol_ok = 0
+                    Dim ol_ok
+                    ol_ok = 0
                     '发送get请求，请求版本表
                     Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/packlist.json")
                     request.Method = "GET"
@@ -103,6 +104,7 @@ Class list
                     If ol_ok = 1 Then
                         '比对本地与服务器日期
                         Dim update_yes = 0
+                        update_yes = 0
                         If Int(year_ol) > Int(info_xml.<packdate>.<year>.Value.ToString) Then
                             update_yes = 1
                         Else
@@ -301,7 +303,8 @@ Class list
         Next
 
         '从资源服务器获取该版本信息
-        Dim ol_ok = 0
+        Dim ol_ok
+        ol_ok = 0
         '发送get请求，请求版本表
         Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/packlist.json")
         request.Method = "GET"
@@ -333,6 +336,7 @@ Class list
         If ol_ok = 1 Then
             '比对本地与服务器日期
             Dim update_yes = 0
+            update_yes = 0
             If Int(year_ol) > Int(year_l) Then
                 update_yes = 1
             Else
