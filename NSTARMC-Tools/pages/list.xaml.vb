@@ -586,7 +586,10 @@ Class list
 
                         For Each Dir_list In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\unzip_dir_nstarmctoolsupd\file\")
                             File.Copy(Dir_list & "\info.xml", upd_dir & "\info.xml", True)
+                            Directory.Delete(upd_dir & "\.minecraft\versions\", True)
+                            Directory.Move(Dir_list & "\.minecraft\versions\", upd_dir & "\.minecraft\versions\")
                         Next
+
                     Catch ex As Exception
 
                     End Try

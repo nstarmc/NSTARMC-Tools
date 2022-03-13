@@ -91,7 +91,7 @@ Partial Public NotInheritable Class MySettings
     
     <Global.System.Configuration.UserScopedSettingAttribute(),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+     Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
     Public Property bg() As Boolean
         Get
             Return CType(Me("bg"),Boolean)
@@ -110,6 +110,30 @@ Partial Public NotInheritable Class MySettings
         End Get
         Set
             Me("sguid") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+    Public Property dialogv() As Integer
+        Get
+            Return CType(Me("dialogv"),Integer)
+        End Get
+        Set
+            Me("dialogv") = value
+        End Set
+    End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("0.65")>  _
+    Public Property bgtoumingdu() As Single
+        Get
+            Return CType(Me("bgtoumingdu"),Single)
+        End Get
+        Set
+            Me("bgtoumingdu") = value
         End Set
     End Property
 End Class

@@ -58,9 +58,12 @@ Class setting
 
         If My.Settings.bg = True Then
             sw_bg.IsOn = True
+            bg_op.IsEnabled = True
         Else
             sw_bg.IsOn = False
+            bg_op.IsEnabled = False
         End If
+        bg_op.Value = My.Settings.bgtoumingdu
     End Sub
 
     Private Sub sw_autoclose_Toggled(sender As Object, e As RoutedEventArgs) Handles sw_autoclose.Toggled
@@ -77,11 +80,11 @@ Class setting
         If sw_bg.IsOn = True Then
             My.Settings.bg = True
             My.Settings.Save()
-
+            bg_op.IsEnabled = True
         Else
             My.Settings.bg = False
             My.Settings.Save()
-
+            bg_op.IsEnabled = False
         End If
     End Sub
     Private _parentWin As MainWindow
@@ -95,6 +98,12 @@ Class setting
         End Set
     End Property
     Private Sub bg_op_ValueChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Double)) Handles bg_op.ValueChanged
-        ParentWindow.ChangeBG(bg_op.Value)
+        If My.Settings.bg = True Then
+            ParentWindow.ChangeBG(bg_op.Value)
+            My.Settings.bgtoumingdu = bg_op.Value
+            My.Settings.Save()
+            toumingdu_card.Subtitle = "设置背景透明度" & vbCrLf & "当前不透明度：" & Math.Round(bg_op.Value, 2) * 100 & "%"
+        End If
+
     End Sub
 End Class

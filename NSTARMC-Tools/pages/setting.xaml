@@ -21,10 +21,10 @@
             <wu:CardControl Title="暗黑模式" Subtitle="是否开启黑暗模式" Margin="12,12,16,0" >
                 <ui:ToggleSwitch  x:Name="sw1"/>
             </wu:CardControl>
-            <wu:CardControl Title="背景图片" Subtitle="该项功能处于测试阶段，还在开发当中···&#13;现版本与UI适配程度较低&#13;【该设置在下一次启动时生效】" Margin="12,12,16,0" >
+            <wu:CardControl Title="背景图片" Subtitle="从资源服务器随机获取一张背景（暂时不可自定义）&#13;【该设置在下一次启动时生效】" Margin="12,12,16,0" >
                 <ui:ToggleSwitch  x:Name="sw_bg"/>
             </wu:CardControl>
-            <wu:CardControl Title="背景图片透明度" Subtitle="该项功能处于测试阶段，还在开发当中···&#13;现版本与UI适配程度较低" Margin="12,12,16,0" >
+            <wu:CardControl Title="背景图片透明度" Subtitle="设置背景的不透明度" Margin="12,12,16,0" x:Name="toumingdu_card">
                 <Slider Width="120" x:Name="bg_op" Maximum="1.0" Minimum="0.0" ValueChanged="bg_op_ValueChanged"/>
             </wu:CardControl>
             <TextBlock Text="本工具设置" Margin="12,12,16,0"></TextBlock>

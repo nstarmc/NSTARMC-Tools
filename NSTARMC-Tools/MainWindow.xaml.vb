@@ -2,6 +2,10 @@
 Imports System.Net
 Imports ModernWpf
 Imports WPFUI
+Imports System.Linq
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
+Imports dotnetCampus.FileDownloader
 
 Class MainWindow
     Dim _page_java As java = New java()
@@ -15,6 +19,7 @@ Class MainWindow
     Private Sub NavView_SelectionChanged(sender As ModernWpf.Controls.NavigationView, args As ModernWpf.Controls.NavigationViewSelectionChangedEventArgs) Handles NavView.SelectionChanged
         If NavView.SelectedItem.Content.ToString = "首页" Then
             frame.Content = _page_homepage
+            _page_homepage.ParentWindow = Me
         End If
         If NavView.SelectedItem.Content.ToString = "帮助" Then
             frame.Content = _page_help
@@ -40,7 +45,7 @@ Class MainWindow
         End If
     End Sub
 
-    Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
+    Private Async Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
 
         If My.Settings.themebysys = True Then
             If Theme.Manager.GetSystemTheme = Theme.Style.Dark Then
@@ -61,17 +66,131 @@ Class MainWindow
         End If
 
         If My.Settings.bg = True Then
-            Dim brush As New ImageBrush()
-            brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
-            frame.Background = brush
-            frame.Background.Opacity = 0.5
+            If File.Exists(My.Application.Info.DirectoryPath & "\Background\bg2.png") Then
+                File.Delete(My.Application.Info.DirectoryPath & "\Background\bg.png")
+                Rename(My.Application.Info.DirectoryPath & "\Background\bg2.png", My.Application.Info.DirectoryPath & "\Background\bg.png")
+                Dim brush As New ImageBrush()
+                brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\Background\bg.png", UriKind.Absolute))
+                NavView.Background = brush
+                NavView.Background.Opacity = My.Settings.bgtoumingdu
+
+                Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/olbg.json")
+                request.Method = "GET"
+                Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+                Dim jsonback = sr.ReadToEnd '储存返回的json信息
+                '处理json
+                Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+                Dim olbg_list(888)
+                Dim i = 0
+                For Each x In json("img")
+                    olbg_list(i) = x
+                    i = i + 1
+                Next
+
+                Dim MyValue As Integer
+                Randomize()
+                MyValue = CInt(Int((i * Rnd()) + 0))
+                Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\Background\")
+                Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\Background\bg2.png")
+                Dim segmentFileDownloader = New SegmentFileDownloader(olbg_list(MyValue), info)
+                Await segmentFileDownloader.DownloadFileAsync()
+            Else
+                Dim brush As New ImageBrush()
+                brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
+                NavView.Background = brush
+                NavView.Background.Opacity = My.Settings.bgtoumingdu
+
+                Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/olbg.json")
+                request.Method = "GET"
+                Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+                Dim jsonback = sr.ReadToEnd '储存返回的json信息
+                '处理json
+                Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+                Dim olbg_list(888)
+                Dim i = 0
+                For Each x In json("img")
+                    olbg_list(i) = x
+                    i = i + 1
+                Next
+
+                Dim MyValue As Integer
+                Randomize()
+                MyValue = CInt(Int((i * Rnd()) + 0))
+                Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\Background\")
+                Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\Background\bg2.png")
+                Dim segmentFileDownloader = New SegmentFileDownloader(olbg_list(MyValue), info)
+                Await segmentFileDownloader.DownloadFileAsync()
+            End If
+            'Dim brush As New ImageBrush()
+            'brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
+            'frame.Background = brush
+            'frame.Background.Opacity = My.Settings.bgtoumingdu
+
+            'Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/olbg.json")
+            'request.Method = "GET"
+            'Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+            'Dim jsonback = sr.ReadToEnd '储存返回的json信息
+            ''处理json
+            'Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+            'Dim olbg_list(888)
+            'Dim i = 0
+            'For Each x In json("img")
+            '    olbg_list(i) = x
+            '    i = i + 1
+            'Next
+
+            'Dim MyValue As Integer
+            'Randomize()
+            'MyValue = CInt(Int((i * Rnd()) + 0))
+            'Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\Background\")
+            'Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\Background\bg.png")
+            'Dim segmentFileDownloader = New SegmentFileDownloader(olbg_list(MyValue), info)
+            'Await segmentFileDownloader.DownloadFileAsync()
+            'brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\Background\bg.png", UriKind.Absolute))
+            'frame.Background = brush
+            'frame.Background.Opacity = My.Settings.bgtoumingdu
         End If
     End Sub
 
-    Public Sub ChangeBG(ByVal opa As String)
-        Dim brush As New ImageBrush()
-        brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
-        frame.Background = brush
-        frame.Background.Opacity = opa
+    Public Async Sub ChangeBG(ByVal opa As String)
+        If File.Exists(My.Application.Info.DirectoryPath & "\Background\bg.png") Then
+            Dim brush As New ImageBrush()
+            brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\Background\bg.png", UriKind.Absolute))
+            NavView.Background = brush
+            NavView.Background.Opacity = My.Settings.bgtoumingdu
+        Else
+            Dim brush As New ImageBrush()
+            brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
+            NavView.Background = brush
+            NavView.Background.Opacity = My.Settings.bgtoumingdu
+
+            Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/olbg.json")
+            request.Method = "GET"
+            Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+            Dim jsonback = sr.ReadToEnd '储存返回的json信息
+            '处理json
+            Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+            Dim olbg_list(888)
+            Dim i = 0
+            For Each x In json("img")
+                olbg_list(i) = x
+                i = i + 1
+            Next
+
+            Dim MyValue As Integer
+            Randomize()
+            MyValue = CInt(Int((i * Rnd()) + 0))
+            Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\Background\")
+            Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\Background\bg.png")
+            Dim segmentFileDownloader = New SegmentFileDownloader(olbg_list(MyValue), info)
+            Await segmentFileDownloader.DownloadFileAsync()
+            brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\Background\bg.png", UriKind.Absolute))
+            NavView.Background = brush
+            NavView.Background.Opacity = My.Settings.bgtoumingdu
+        End If
+
+    End Sub
+    Public Sub ChangeDW()
+
     End Sub
 End Class

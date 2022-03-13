@@ -12,10 +12,16 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="bg" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="sguid" Type="System.String" Scope="User">
       <Value Profile="(Default)">nothing</Value>
+    </Setting>
+    <Setting Name="dialogv" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="bgtoumingdu" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.65</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -124,7 +124,23 @@ Class Homepage
         notice1.Dispatcher.Invoke(New Action(Sub()
                                                  notice1.Subtitle = notice.<announcement>.Value & vbCrLf & "公告发布日期：" & notice.<date>.Value
                                              End Sub))
-
+        If My.Settings.dialogv < notice.<dialogv>.Value.ToString Then
+            notice1.Dispatcher.Invoke(New Action(Async Sub()
+                                                     Dim dialog As ContentDialog = New ContentDialog() With {
+                                                            .Title = notice.<dialogt>.Value,
+                                                            .CloseButtonText = "我知道啦",
+                                                            .PrimaryButtonText = "不再提示",
+                                                            .DefaultButton = ContentDialogButton.Primary,
+                                                            .Content = notice.<dialog>.Value
+                                                        }
+                                                     Dim result As ContentDialogResult = Await dialog.ShowAsync()
+                                                     If result = ContentDialogResult.Primary Then
+                                                         My.Settings.dialogv = notice.<dialogv>.Value.ToString
+                                                         My.Settings.Save()
+                                                     End If
+                                                 End Sub))
+        End If
+        '读取整合包
         mclist.Dispatcher.Invoke(New Action(Sub()
                                                 mclist.Items.Clear()
                                             End Sub))
@@ -144,14 +160,14 @@ Class Homepage
             mclist.Dispatcher.Invoke(New Action(Sub()
                                                     mclist.IsEnabled = False
                                                     Dim dialog As ContentDialog = New ContentDialog() With {
-                                                        .Title = "错误",
-                                                        .CloseButtonText = "我知道了",
+                                                        .Title = "本地未检测到整合包文件~",
+                                                        .CloseButtonText = "我知道啦",
                                                         .IsPrimaryButtonEnabled = False,
                                                         .DefaultButton = ContentDialogButton.Close,
                                                         .Content = "无法在工具下的File检测到有效格式的整合包！" & vbCrLf & "请在左侧导航栏进入下载页面下载整合包！" & vbCrLf & "或者请正确放置整合包文件后，重启工具再试！" & vbCrLf & "如还是无法检测，请在Q群求助！"
                                                     }
                                                     dialog.ShowAsync()
-
+                                                    'ParentWindow.ChangeDW()
                                                 End Sub))
 
         Else
@@ -163,6 +179,16 @@ Class Homepage
 
         End If
     End Function
+    Private _parentWin As MainWindow
+
+    Public Property ParentWindow As MainWindow
+        Get
+            Return _parentWin
+        End Get
+        Set(ByVal value As MainWindow)
+            _parentWin = value
+        End Set
+    End Property
 
     Private Sub mclist_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles mclist.SelectionChanged
         Dim choose_dir
