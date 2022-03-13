@@ -30,7 +30,8 @@ Class download
                                                    End Sub))
         For Each x In json("group")
             downlod_group.Dispatcher.Invoke(New Action(Sub()
-                                                           downlod_group.Items.Add(json("group")(0)("name"))
+                                                           Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x.ToString), JObject)
+                                                           downlod_group.Items.Add(json2("name"))
                                                        End Sub))
         Next
         downlod_group.Dispatcher.Invoke(New Action(Sub()
@@ -55,9 +56,10 @@ Class download
 
         For Each x In json("group")
             downlod_group.Dispatcher.Invoke(New Action(Sub()
-                                                           If json("group")(0)("name") = downlod_group.SelectedItem Then
+                                                           Dim json3 As JObject = CType(JsonConvert.DeserializeObject(x.ToString), JObject)
+                                                           If json3("name") = downlod_group.SelectedItem Then
                                                                list_ver.Items.Clear()
-                                                               For Each x2 In json("group")(0)("list")
+                                                               For Each x2 In json3("list")
                                                                    Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
                                                                    list_ver.Items.Add(json2("version"))
                                                                Next
