@@ -24,6 +24,9 @@
             <wu:CardControl Title="背景图片" Subtitle="该项功能处于测试阶段，还在开发当中···&#13;现版本与UI适配程度较低&#13;【该设置在下一次启动时生效】" Margin="12,12,16,0" >
                 <ui:ToggleSwitch  x:Name="sw_bg"/>
             </wu:CardControl>
+            <wu:CardControl Title="背景图片透明度" Subtitle="该项功能处于测试阶段，还在开发当中···&#13;现版本与UI适配程度较低" Margin="12,12,16,0" >
+                <Slider Width="120" x:Name="bg_op" Maximum="1.0" Minimum="0.0" ValueChanged="bg_op_ValueChanged"/>
+            </wu:CardControl>
             <TextBlock Text="本工具设置" Margin="12,12,16,0"></TextBlock>
             <wu:CardControl Title="自动关闭" Subtitle="设置是否在整合包启动器启动后，本工具自动关闭" Margin="12,12,16,0" >
                 <ui:ToggleSwitch  x:Name="sw_autoclose"/>

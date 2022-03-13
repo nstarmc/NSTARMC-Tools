@@ -72,6 +72,7 @@ Class list
                                                             "整合包ID：" & info_xml.<packid>.Value
                                                         End Sub))
                     '从资源服务器获取该版本信息
+                    Dim ol_ok = 0
                     '发送get请求，请求版本表
                     Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/packlist.json")
                     request.Method = "GET"
@@ -86,6 +87,7 @@ Class list
                                                                     If json2("id").ToString > 10000 Then
                                                                         If json2("id").ToString < 20000 Then
                                                                             If json2("id").ToString = Int(info_xml.<packid>.Value) Then
+                                                                                ol_ok = 1
                                                                                 year_ol = json2("update_time")("year").ToString
                                                                                 month_ol = json2("update_time")("month").ToString
                                                                                 day_ol = json2("update_time")("date").ToString
@@ -98,36 +100,43 @@ Class list
                                                                 Next
                                                             End Sub))
                     Next
-
-                    '比对本地与服务器日期
-                    Dim update_yes = 0
-                    If Int(year_ol) > Int(info_xml.<packdate>.<year>.Value.ToString) Then
-                        update_yes = 1
-                    Else
-                        If Int(month_ol) > Int(info_xml.<packdate>.<month>.Value.ToString) Then
+                    If ol_ok = 1 Then
+                        '比对本地与服务器日期
+                        Dim update_yes = 0
+                        If Int(year_ol) > Int(info_xml.<packdate>.<year>.Value.ToString) Then
                             update_yes = 1
                         Else
-                            If Int(month_ol) = Int(info_xml.<packdate>.<month>.Value.ToString) And Int(day_ol) > Int(info_xml.<packdate>.<day>.Value.ToString) Then
+                            If Int(month_ol) > Int(info_xml.<packdate>.<month>.Value.ToString) Then
                                 update_yes = 1
                             Else
-                                update_yes = 0
+                                If Int(month_ol) = Int(info_xml.<packdate>.<month>.Value.ToString) And Int(day_ol) > Int(info_xml.<packdate>.<day>.Value.ToString) Then
+                                    update_yes = 1
+                                Else
+                                    update_yes = 0
+                                End If
                             End If
                         End If
-                    End If
-                    If update_yes = 1 Then
-                        '检测到更新，弹窗
-                        mclist.Dispatcher.Invoke(New Action(Sub()
-                                                                verinfolabel.Content += vbCrLf & "该版本整合包存在新版本！"
-                                                                Dim dialog As ContentDialog = New ContentDialog() With {
-                                                                    .Title = "有新的整合包版本！",
-                                                                    .CloseButtonText = "我知道啦",
-                                                                    .DefaultButton = ContentDialogButton.Close,
-                                                                    .Content = "检测到选中的整合包有新的版本！" & vbCrLf & "建议前往版本列表页面更新整合包~" & vbCrLf & "如果数据重要，建议先备份哦~"
-                                                                }
-                                                                dialog.ShowAsync()
+                        If update_yes = 1 Then
+                            '检测到更新，弹窗
+                            mclist.Dispatcher.Invoke(New Action(Sub()
+                                                                    verinfolabel.Content += vbCrLf & "该版本整合包存在新版本！"
+                                                                    Dim dialog As ContentDialog = New ContentDialog() With {
+                                                                        .Title = "有新的整合包版本！",
+                                                                        .CloseButtonText = "我知道啦",
+                                                                        .DefaultButton = ContentDialogButton.Close,
+                                                                        .Content = "检测到选中的整合包有新的版本！" & vbCrLf & "建议前往版本列表页面更新整合包~" & vbCrLf & "如果数据重要，建议先备份哦~"
+                                                                    }
+                                                                    dialog.ShowAsync()
 
-                                                            End Sub))
+                                                                End Sub))
+                        Else
+                            mclist.Dispatcher.Invoke(New Action(Sub()
+                                                                    verinfolabel.Content += vbCrLf & "该版本整合包仅限与本地！"
+
+                                                                End Sub))
+                        End If
                     End If
+
                 End If
 
             End If
@@ -291,6 +300,7 @@ Class list
         Next
 
         '从资源服务器获取该版本信息
+        Dim ol_ok = 0
         '发送get请求，请求版本表
         Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/packlist.json")
         request.Method = "GET"
@@ -305,6 +315,7 @@ Class list
                                                         If json2("id").ToString > 10000 Then
                                                             If json2("id").ToString < 20000 Then
                                                                 If json2("id").ToString = local_id Then
+                                                                    ol_ok = 1
                                                                     year_ol = json2("update_time")("year").ToString
                                                                     month_ol = json2("update_time")("month").ToString
                                                                     day_ol = json2("update_time")("date").ToString
@@ -317,54 +328,67 @@ Class list
                                                     Next
                                                 End Sub))
         Next
-
-        '比对本地与服务器日期
-        Dim update_yes = 0
-        If Int(year_ol) > Int(year_l) Then
-            update_yes = 1
-        Else
-            If Int(month_ol) > Int(month_l) Then
+        If ol_ok = 1 Then
+            '比对本地与服务器日期
+            Dim update_yes = 0
+            If Int(year_ol) > Int(year_l) Then
                 update_yes = 1
             Else
-                If Int(month_ol) = Int(month_l) And Int(day_ol) > Int(day_l) Then
+                If Int(month_ol) > Int(month_l) Then
                     update_yes = 1
                 Else
-                    update_yes = 0
+                    If Int(month_ol) = Int(month_l) And Int(day_ol) > Int(day_l) Then
+                        update_yes = 1
+                    Else
+                        update_yes = 0
+                    End If
                 End If
             End If
-        End If
-        If update_yes = 1 Then
-            '检测到更新，弹窗确认
-            mclist.Dispatcher.Invoke(New Action(Async Sub()
+            If update_yes = 1 Then
+                '检测到更新，弹窗确认
+                mclist.Dispatcher.Invoke(New Action(Async Sub()
 
 
-                                                    Dim dialog As ContentDialog = New ContentDialog() With {
-                                                        .Title = "确认更新整合包？",
-                                                        .CloseButtonText = "取消",
-                                                        .PrimaryButtonText = "开始更新",
-                                                        .DefaultButton = ContentDialogButton.Primary,
-                                                        .Content = "我们即将为您更新整合包" & vbCrLf & "更新后您的数据会被保留" & vbCrLf & "如果数据重要，建议先备份哦~"
-                                                    }
-                                                    Dim result As ContentDialogResult = Await dialog.ShowAsync()
-                                                    If result = ContentDialogResult.Primary Then
-                                                        '执行更新
-                                                        Dim upd As Thread = New Thread(AddressOf Upd_ver_main)
-                                                        upd.Start()
-                                                    End If
-                                                End Sub))
+                                                        Dim dialog As ContentDialog = New ContentDialog() With {
+                                                            .Title = "确认更新整合包？",
+                                                            .CloseButtonText = "取消",
+                                                            .PrimaryButtonText = "开始更新",
+                                                            .DefaultButton = ContentDialogButton.Primary,
+                                                            .Content = "我们即将为您更新整合包" & vbCrLf & "更新后您的数据会被保留" & vbCrLf & "如果数据重要，建议先备份哦~"
+                                                        }
+                                                        Dim result As ContentDialogResult = Await dialog.ShowAsync()
+                                                        If result = ContentDialogResult.Primary Then
+                                                            '执行更新
+                                                            Dim upd As Thread = New Thread(AddressOf Upd_ver_main)
+                                                            upd.Start()
+                                                        End If
+                                                    End Sub))
+            Else
+
+                '没有更新，弹窗提示
+                mclist.Dispatcher.Invoke(New Action(Sub()
+                                                        Dim dialog As ContentDialog = New ContentDialog() With {
+                                                                                                                .Title = "没有更新",
+                                                                                                                .CloseButtonText = "我知道啦",
+                                                                                                                .DefaultButton = ContentDialogButton.Close,
+                                                                                                                .Content = "当前选中版本没有新版本哦~"
+                                                                                                            }
+                                                        dialog.ShowAsync()
+                                                    End Sub))
+            End If
         Else
-
-            '没有更新，弹窗提示
+            '不存在，弹窗提示
             mclist.Dispatcher.Invoke(New Action(Sub()
                                                     Dim dialog As ContentDialog = New ContentDialog() With {
-                                                                                                            .Title = "没有更新",
+                                                                                                            .Title = "资源服务器无此整合包",
                                                                                                             .CloseButtonText = "我知道啦",
                                                                                                             .DefaultButton = ContentDialogButton.Close,
-                                                                                                            .Content = "当前选中版本没有新版本哦~"
+                                                                                                            .Content = "没有在服务器上搜索到相应ID的整合包哦~"
                                                                                                         }
                                                     dialog.ShowAsync()
                                                 End Sub))
         End If
+
     End Function
     '更新线程
     Private Function Upd_ver_main(ByVal objParamReport As Object) As String

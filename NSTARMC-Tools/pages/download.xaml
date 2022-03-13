@@ -21,15 +21,18 @@
                         <ListBox x:Name="list_ver"></ListBox>
                     </StackPanel>
                 </wpfui:Card>
+                <StackPanel>
+
                 <wpfui:Card Margin="12,18,16,0">
                     <StackPanel Orientation="Horizontal">
                     <StackPanel>
-                    <Button Content="开始下载" Click="Button_Click"></Button>
+                        <Button Content="开始下载" Click="Button_Click"></Button>
                         <TextBlock x:Name="dw_info" Text="当前没有下载任务哦~"/>
                     </StackPanel>
                         <ui:ProgressRing x:Name="dw_pro" Margin="6,0,6,0"/>
                     </StackPanel>
                 </wpfui:Card>
+                </StackPanel>
             </StackPanel>
             <TextBlock Margin="12,18,16,0" Text="手动下载"/>
             <wpfui:CardExpander  Header="手动下载整合包" Subtitle="前往以下网站手动下载整合包&#13;PS:如果不是上方下载功能故障，不建议手动下载~" Margin="12,18,16,0" Icon="HandDraw24">

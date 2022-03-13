@@ -84,4 +84,17 @@ Class setting
 
         End If
     End Sub
+    Private _parentWin As MainWindow
+
+    Public Property ParentWindow As MainWindow
+        Get
+            Return _parentWin
+        End Get
+        Set(ByVal value As MainWindow)
+            _parentWin = value
+        End Set
+    End Property
+    Private Sub bg_op_ValueChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Double)) Handles bg_op.ValueChanged
+        ParentWindow.ChangeBG(bg_op.Value)
+    End Sub
 End Class

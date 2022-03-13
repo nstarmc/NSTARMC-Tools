@@ -21,6 +21,7 @@ Class MainWindow
         End If
         If NavView.SelectedItem.Content.ToString = "设置" Or NavView.SelectedItem.Content.ToString = "Settings" Then
             frame.Content = _page_setting
+            _page_setting.ParentWindow = Me
         End If
         If NavView.SelectedItem.Content.ToString = "Java下载" Then
             frame.Content = _page_java
@@ -63,13 +64,14 @@ Class MainWindow
             Dim brush As New ImageBrush()
             brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
             frame.Background = brush
+            frame.Background.Opacity = 0.5
         End If
     End Sub
 
-    Private Sub ChangeBG()
+    Public Sub ChangeBG(ByVal opa As String)
         Dim brush As New ImageBrush()
         brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
         frame.Background = brush
-        frame.Background.Opacity = 50
+        frame.Background.Opacity = opa
     End Sub
 End Class
