@@ -91,8 +91,9 @@ Class download
         '遍历读取下载链接，id
         For Each x In json("group")
             downlod_group.Dispatcher.Invoke(New Action(Sub()
-                                                           If json("group")(0)("name") = downlod_group.SelectedItem Then
-                                                               For Each x2 In json("group")(0)("list")
+                                                           Dim json3 As JObject = CType(JsonConvert.DeserializeObject(x.ToString), JObject)
+                                                           If json3("name") = downlod_group.SelectedItem Then
+                                                               For Each x2 In json3("list")
                                                                    Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
                                                                    If json2("version") = list_ver.SelectedItem Then
                                                                        down_url = json2("download")

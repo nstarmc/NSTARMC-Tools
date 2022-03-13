@@ -129,12 +129,13 @@ Class list
                                                                     dialog.ShowAsync()
 
                                                                 End Sub))
-                        Else
-                            mclist.Dispatcher.Invoke(New Action(Sub()
-                                                                    verinfolabel.Content += vbCrLf & "该版本整合包仅限与本地！"
 
-                                                                End Sub))
                         End If
+                    Else
+                        mclist.Dispatcher.Invoke(New Action(Sub()
+                                                                verinfolabel.Content += vbCrLf & "该版本整合包仅限于本地！"
+
+                                                            End Sub))
                     End If
 
                 End If
@@ -310,7 +311,8 @@ Class list
         Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
         For Each x In json("group")
             mclist.Dispatcher.Invoke(New Action(Sub()
-                                                    For Each x2 In json("group")(0)("list")
+                                                    Dim json3 As JObject = CType(JsonConvert.DeserializeObject(x.ToString), JObject)
+                                                    For Each x2 In json3("list")
                                                         Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
                                                         If json2("id").ToString > 10000 Then
                                                             If json2("id").ToString < 20000 Then
