@@ -18,7 +18,11 @@
                         <TextBlock Text="选择您想要下载的整合包类别"/>
                         <ComboBox x:Name="downlod_group"/>
                         <TextBlock Text="选择您想要下载的整合包版本"/>
-                        <ListBox x:Name="list_ver"></ListBox>
+                        <ListBox x:Name="list_ver">
+                            <ListBox.Background>
+                                <SolidColorBrush Color="#FFF2F2F2" Opacity="0"/>
+                            </ListBox.Background>
+                        </ListBox>
                     </StackPanel>
                 </wpfui:Card>
                 <StackPanel>

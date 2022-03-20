@@ -136,6 +136,18 @@ Partial Public NotInheritable Class MySettings
             Me("bgtoumingdu") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("1.0")>  _
+    Public Property ver() As String
+        Get
+            Return CType(Me("ver"),String)
+        End Get
+        Set
+            Me("ver") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

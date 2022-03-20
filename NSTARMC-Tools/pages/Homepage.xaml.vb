@@ -11,7 +11,7 @@ Class Homepage
     Dim checkupdate = 0
     Dim local_id, url_online, year_ol, month_ol, day_ol, year_l, month_l, day_l, upd_dir '定义检查更新部分使用变量
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
-        Dim homepagestart As Thread = New Thread(AddressOf Homepagestartthread)
+        Dim homepagestart As Thread = New Thread(AddressOf HomepagestartthreadAsync)
         homepagestart.Start()
     End Sub
     Private Async Function CheckupdatethreadAsync(ByVal objParamReport As Object) As Task(Of String)
@@ -107,7 +107,7 @@ Class Homepage
                                              End Sub))
     End Function
 
-    Private Function Homepagestartthread(ByVal objParamReport As Object) As String
+    Private Async Function HomepagestartthreadAsync(ByVal objParamReport As Object) As Task(Of String)
 
         '检查工具更新
         Dim checkupdate As Thread = New Thread(AddressOf CheckupdatethreadAsync)
@@ -124,6 +124,26 @@ Class Homepage
         notice1.Dispatcher.Invoke(New Action(Sub()
                                                  notice1.Subtitle = notice.<announcement>.Value & vbCrLf & "公告发布日期：" & notice.<date>.Value
                                              End Sub))
+
+        '        Dim request2 As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/tool.xml")
+        '        request2.Method = "GET"
+        '        Dim sr2 As StreamReader = New StreamReader(request2.GetResponse().GetResponseStream)
+        '        Dim tool_xml As XElement = XElement.Parse(sr2.ReadToEnd)
+        '        If Not My.Settings.ver = My.Application.Info.Version.ToString Then
+        '            notice1.Dispatcher.Invoke(New Action(Sub()
+        '                                                     Dim dialog As ContentDialog = New ContentDialog() With {
+        '.Title = "NSTARMC-Tools V" & My.Application.Info.Version.ToString & "更新日志",
+        '.CloseButtonText = "我知道啦",
+        '.IsPrimaryButtonEnabled = False,
+        '.DefaultButton = ContentDialogButton.Close,
+        '.Content = tool_xml.<content>.Value
+        '}
+        '                                                     dialog.ShowAsync()
+        '                                                     My.Settings.ver = My.Application.Info.Version.ToString
+        '                                                     My.Settings.Save()
+        '                                                 End Sub))
+
+        '        End If
         If My.Settings.dialogv < notice.<dialogv>.Value.ToString Then
             notice1.Dispatcher.Invoke(New Action(Async Sub()
                                                      Dim dialog As ContentDialog = New ContentDialog() With {

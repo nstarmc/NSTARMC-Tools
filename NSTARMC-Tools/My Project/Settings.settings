@@ -23,5 +23,8 @@
     <Setting Name="bgtoumingdu" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0.65</Value>
     </Setting>
+    <Setting Name="ver" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1.0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
