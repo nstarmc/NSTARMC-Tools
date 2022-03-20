@@ -19,7 +19,7 @@
 
             </wpfui:CardControl>
             <wpfui:CardControl Title="下载信息" Margin="12,8,16,0" Icon="Info16" x:Name="dw_java_text">
-                <Button Content="开始下载" Margin="6,0,0,0" x:Name="bt_start"></Button>
+                <Button Content="开始下载" Margin="6,0,0,0" x:Name="bt_start" Style="{StaticResource AccentButtonStyle}"></Button>
             </wpfui:CardControl>
             <wpfui:CardControl x:Name="card_unzip" Title="解压Java" Subtitle="工具正在帮您将下载的Java解压到整合包内···" Margin="12,8,16,0" Visibility="Collapsed">
                 <ui:ProgressRing IsActive="True" x:Name="ring_unzip"/>

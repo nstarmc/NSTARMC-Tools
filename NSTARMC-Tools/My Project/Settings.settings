@@ -26,5 +26,8 @@
     <Setting Name="ver" Type="System.String" Scope="User">
       <Value Profile="(Default)">1.0</Value>
     </Setting>
+    <Setting Name="dw_thread" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">8</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

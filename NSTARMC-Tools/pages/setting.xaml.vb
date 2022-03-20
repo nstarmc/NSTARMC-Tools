@@ -1,4 +1,5 @@
-﻿Imports ModernWpf
+﻿Imports System.Text.RegularExpressions
+Imports ModernWpf
 Imports ModernWpf.Controls
 Imports WPFUI
 
@@ -64,6 +65,8 @@ Class setting
             bg_op.IsEnabled = False
         End If
         bg_op.Value = My.Settings.bgtoumingdu
+        dw_thread_value.Text = My.Settings.dw_thread
+
     End Sub
 
     Private Sub sw_autoclose_Toggled(sender As Object, e As RoutedEventArgs) Handles sw_autoclose.Toggled
@@ -103,6 +106,23 @@ Class setting
             My.Settings.bgtoumingdu = bg_op.Value
             My.Settings.Save()
             toumingdu_card.Subtitle = "设置背景透明度" & vbCrLf & "当前不透明度：" & Math.Round(bg_op.Value, 2) * 100 & "%"
+        End If
+
+    End Sub
+
+    Private Sub TextBox_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+        Dim re As Regex = New Regex("[^0-9]+")
+        e.Handled = re.IsMatch(e.Text)
+    End Sub
+
+    Private Sub dw_thread_value_TextChanged(sender As Object, e As TextChangedEventArgs) Handles dw_thread_value.TextChanged
+        If dw_thread_value.Text = "" Then
+            dw_thread_value.Text = 8
+            My.Settings.dw_thread = 8
+            My.Settings.Save()
+        Else
+            My.Settings.dw_thread = Int(dw_thread_value.Text)
+            My.Settings.Save()
         End If
 
     End Sub

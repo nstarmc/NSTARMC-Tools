@@ -25,7 +25,7 @@
             <wu:CardControl Title="版本信息：" Subtitle="以下为你选中的整合包版本信息"  Margin="12,12,16,0" Icon="Info16" x:Name="card_info">
                 <Label x:Name="verinfolabel"/>
             </wu:CardControl>
-            <wu:CardControl Title="启动游戏" Subtitle="点击右侧按钮启动游戏吧！"  Margin="12,12,16,0" Icon="Open16" x:Name="card_lauch">
+            <wu:CardControl Title="启动游戏" Subtitle="点击右侧按钮启动游戏吧！"  Margin="12,12,16,12" Icon="Open16" x:Name="card_lauch">
                 <StackPanel>
                     <Button Content="使用PCL2启动游戏" Cursor="Hand" Style="{StaticResource AccentButtonStyle}" Margin="0,0,0,6" x:Name="lauch_1"></Button>
                     <Button Content="使用HMCL启动游戏" Cursor="Hand" Style="{StaticResource AccentButtonStyle}" x:Name="lauch_2"></Button>

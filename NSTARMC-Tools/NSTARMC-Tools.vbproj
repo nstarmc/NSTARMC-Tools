@@ -223,11 +223,14 @@
     <PackageReference Include="dotnetCampus.FileDownloader">
       <Version>2.1.2-alpha02</Version>
     </PackageReference>
+    <PackageReference Include="Downloader">
+      <Version>2.3.3</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
       <Version>1.0.1133-prerelease</Version>
     </PackageReference>
     <PackageReference Include="ModernWpfUI">
-        <Version>0.9.4</Version>
+      <Version>0.9.4</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>

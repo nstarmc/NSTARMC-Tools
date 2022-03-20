@@ -148,6 +148,18 @@ Partial Public NotInheritable Class MySettings
             Me("ver") = value
         End Set
     End Property
+    
+    <Global.System.Configuration.UserScopedSettingAttribute(),  _
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+     Global.System.Configuration.DefaultSettingValueAttribute("8")>  _
+    Public Property dw_thread() As Double
+        Get
+            Return CType(Me("dw_thread"),Double)
+        End Get
+        Set
+            Me("dw_thread") = value
+        End Set
+    End Property
 End Class
 
 Namespace My

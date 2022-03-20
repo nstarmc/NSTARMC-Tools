@@ -28,13 +28,14 @@
                 <StackPanel>
 
                 <wpfui:Card Margin="12,18,16,0">
-                    <StackPanel Orientation="Horizontal">
                     <StackPanel>
-                        <Button Content="开始下载" Click="Button_Click"></Button>
-                        <TextBlock x:Name="dw_info" Text="当前没有下载任务哦~"/>
-                    </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="开始下载" x:Name="bt_startdw" Click="Button_Click" Style="{StaticResource AccentButtonStyle}"></Button>
                         <ui:ProgressRing x:Name="dw_pro" Margin="6,0,6,0"/>
+                                
                     </StackPanel>
+                            <TextBlock x:Name="dw_info" Text="当前没有下载任务哦~"/>
+                        </StackPanel>
                 </wpfui:Card>
                 </StackPanel>
             </StackPanel>

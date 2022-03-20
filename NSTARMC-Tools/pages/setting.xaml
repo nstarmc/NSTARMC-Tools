@@ -27,8 +27,12 @@
             <wu:CardControl Title="背景图片透明度" Subtitle="设置背景的不透明度" Margin="12,12,16,0" x:Name="toumingdu_card">
                 <Slider Width="120" x:Name="bg_op" Maximum="1.0" Minimum="0.0" ValueChanged="bg_op_ValueChanged"/>
             </wu:CardControl>
+            <TextBlock Text="下载设置" Margin="12,12,16,0"></TextBlock>
+            <wu:CardControl Title="下载线程" Subtitle="设置本工具下载文件使用的线程分块数量&#13;适当提高线程数量可以提高下载速度，但是太多线程容易造成卡死&#13;一般建议设置在8-16" Margin="12,12,16,0" >
+                <TextBox InputMethod.IsInputMethodEnabled="False" x:Name="dw_thread_value" PreviewTextInput="TextBox_PreviewTextInput" BorderBrush="{x:Null}"/>
+            </wu:CardControl>
             <TextBlock Text="本工具设置" Margin="12,12,16,0"></TextBlock>
-            <wu:CardControl Title="自动关闭" Subtitle="设置是否在整合包启动器启动后，本工具自动关闭" Margin="12,12,16,0" >
+            <wu:CardControl Title="自动关闭" Subtitle="设置是否在整合包启动器启动后，本工具自动关闭" Margin="12,12,16,12" >
                 <ui:ToggleSwitch  x:Name="sw_autoclose"/>
             </wu:CardControl>
         </StackPanel>

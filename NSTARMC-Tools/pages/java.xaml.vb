@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Net
 Imports System.Threading
+Imports Downloader
 Imports ICSharpCode.SharpZipLib.Core
 Imports ICSharpCode.SharpZipLib.Zip
 Imports ModernWpf.Controls
@@ -71,7 +72,7 @@ Class java
     End Sub
 
     Private Sub bt_start_Click(sender As Object, e As RoutedEventArgs) Handles bt_start.Click
-
+        bt_start.IsEnabled = False
         For Each dirlist In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\")
             If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
 
@@ -101,7 +102,7 @@ Class java
                     DWFilename = dirlist & "\java.zip"
                     DWFn = "Java" & java_ver
                     DWDir = dirlist
-                    Dim dw_java As Thread = New Thread(AddressOf Dw_java_thread)
+                    Dim dw_java As Thread = New Thread(AddressOf Dw_java_threadAsync)
                     dw_java.Start()
                     card_dwinfo.Visibility = Visibility.Visible
                     Exit For
@@ -111,71 +112,39 @@ Class java
         Next
     End Sub
 
-    Private Function Dw_java_thread(ByVal objParamReport As Object) As String
+    Private Async Function Dw_java_threadAsync(ByVal objParamReport As Object) As Task(Of String)
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
         If Directory.Exists(DWDir & "\jre-x64") = True Then
             Directory.Delete(DWDir & "\jre-x64", True)
         End If
+
         Try
-            '下载
-            Dim hwq As HttpWebRequest
-            Dim hwp As HttpWebResponse
-            Dim colHeader As WebHeaderCollection  '响应头信息集合
-            Dim lngSize As Int64                  '要下载文件的总大小
-            Dim lngCurSize As Int64               '已经下载大小
-            Dim lngNet As Int64                   '计算网速用
+            '新下载模块
+            Dim downloadOpt = New DownloadConfiguration()
+            downloadOpt.BufferBlockSize = 10240 '文件缓冲区大小
+            downloadOpt.ChunkCount = My.Settings.dw_thread '下载线程数量
+            downloadOpt.MaximumBytesPerSecond = 0 '下载限速
+            downloadOpt.Timeout = 1000 '超时
+            downloadOpt.MaxTryAgainOnFailover = Integer.MaxValue
+            downloadOpt.OnTheFlyDownload = False
+            downloadOpt.ParallelDownload = True
+            downloadOpt.TempDirectory = "C:\temp"
+            downloadOpt.RequestConfiguration.Accept = "*/*"
+            downloadOpt.RequestConfiguration.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
+            downloadOpt.RequestConfiguration.CookieContainer = New CookieContainer()
+            downloadOpt.RequestConfiguration.Headers = New WebHeaderCollection()
+            downloadOpt.RequestConfiguration.KeepAlive = False
+            downloadOpt.RequestConfiguration.ProtocolVersion = HttpVersion.Version11
+            downloadOpt.RequestConfiguration.UseDefaultCredentials = False
+            downloadOpt.RequestConfiguration.UserAgent = ""
+            Dim downloader = New DownloadService(downloadOpt)
+            AddHandler downloader.DownloadProgressChanged, AddressOf OnDownloadProgressChanged
+            Await downloader.DownloadFileTaskAsync(DWUrl, DWFilename)
+        Catch ex As Exception
 
-            Dim stRespones As Stream              '响应流
-            Dim st As FileStream                  '本地流
-            Dim intCurSize As Int64
-            Dim bytBuffer(512) As Byte           '缓存大小
+        End Try
+        Try
 
-            Dim datLast As DateTime               '最后一次时间
-            Dim intDiff As Int32                  '两次时间差（秒）
-
-            datLast = Now   '取得开始时间
-            hwq = CType(HttpWebRequest.Create(DWUrl), HttpWebRequest) '请求对象创建
-            hwp = hwq.GetResponse        '取得响应对象
-            colHeader = hwp.Headers      '取得响应头
-            lngSize = colHeader.Get("Content-Length")  '取得要下载文件的大小
-
-            stRespones = hwp.GetResponseStream '取得响应流
-            st = New FileStream(DWFilename, FileMode.Create) '本地保存文件
-
-            intCurSize = stRespones.Read(bytBuffer, 0, bytBuffer.Length) '响应流中读取
-
-            Do While (intCurSize > 0) '只要有数据就继续
-                st.Write(bytBuffer, 0, intCurSize)     '写入本地文件
-                intDiff = DateDiff(DateInterval.Second, datLast, Now)
-
-
-                lngCurSize = lngCurSize + intCurSize
-                lngNet = lngNet + intCurSize              '单位时间内的下载量
-                If intDiff >= 1 Then
-                    dw_info.Dispatcher.Invoke(New Action(Sub()
-                                                             dw_info.Text = "正在下载：" & DWFn & vbCrLf &
-                                                             "文件大小：" & FormatNumber(lngSize / 1024 / 1024, 2, vbTrue).ToString & " MB" &
-                                                             "/" & FormatNumber(lngCurSize / 1024 / 1024, 2, vbTrue).ToString & " MB" & vbCrLf &
-                                                             "当前速度：" & Math.Round(lngNet / intDiff / 1024 / 1024, 2).ToString & "MB/s"
-                                                             dw_progressbar.Value = Math.Round(lngCurSize / lngSize * 100, 2)
-                                                         End Sub))
-                    datLast = Now
-                    lngNet = 0
-                End If
-                intCurSize = stRespones.Read(bytBuffer, 0, bytBuffer.Length) '继续读取
-            Loop
-            st.Close()
-            stRespones.Close()
-            dw_info.Dispatcher.Invoke(New Action(Sub()
-                                                     dw_info.Text = "下载完成"
-                                                     dw_progressbar.Value = 100
-                                                 End Sub))
-            lngSize = 0
-            lngCurSize = 0
-            lngNet = 0
-            intDiff = 0
-            lngCurSize = 0
-            DWS = 1
             '启动解压缩线程
             Dim unzip_java As Thread = New Thread(AddressOf Unzip_java_thread)
             unzip_java.Start()
@@ -186,6 +155,16 @@ Class java
         End Try
 
     End Function
+
+    Private Sub OnDownloadProgressChanged(sender As Object, e As Downloader.DownloadProgressChangedEventArgs)
+        dw_info.Dispatcher.Invoke(New Action(Sub()
+                                                 dw_info.Text = "文件大小：" & Math.Round(e.TotalBytesToReceive / 1024 / 1024, 2) & "MB/" &
+                                                 Math.Round(e.ReceivedBytesSize / 1024 / 1024, 2) & "MB" &
+                                                 " 当前速度：" & Math.Round(e.BytesPerSecondSpeed / 1024 / 1024, 2) & "MB/S"
+                                                 dw_progressbar.Value = Math.Round(e.ProgressPercentage, 2)
+                                             End Sub))
+    End Sub
+
     Private Function Unzip_java_thread(ByVal objParamReport As Object) As String
         mclist.Dispatcher.Invoke(New Action(Sub()
                                                 card_unzip.Visibility = Visibility.Visible
@@ -240,8 +219,9 @@ Class java
                                                             .Content = "Java已经成功安装在您选择的整合包当中啦！"
                                                         }
                                                         dialog.ShowAsync()
-                                                        End Sub))
-                End If
+                                                        bt_start.IsEnabled = True
+                                                    End Sub))
+            End If
         End Try
     End Function
 End Class
