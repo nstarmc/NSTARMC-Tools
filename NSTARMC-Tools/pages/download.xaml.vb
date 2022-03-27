@@ -15,10 +15,14 @@ Class download
     Dim down_url, packid, down_ver
     Dim allow_download = 0
     Dim parser = New FileIniDataParser()
-    Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+
 
 
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
+        If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\")
+            System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
+        End If
         Dim pagestart As Thread = New Thread(AddressOf Pagestartthread)
         pagestart.Start()
     End Sub
@@ -157,7 +161,7 @@ Class download
     'Public Event DownloadProgressChanged As EventHandler(Of Downloader.DownloadProgressChangedEventArgs)
 
     Public Async Sub Dwfile_threadAsync(ByVal objParamReport As Object)
-
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
 
         Try
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12

@@ -7,8 +7,12 @@ Imports ModernWpf.Controls
 
 Class about
     Dim parser = New FileIniDataParser()
-    Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
+        If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\")
+            System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
+        End If
         Dim pagestart As Thread = New Thread(AddressOf pagestartthread)
         pagestart.Start()
 
@@ -16,7 +20,7 @@ Class about
 
     Private Sub pagestartthread()
 
-
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
         '发送get请求，获取xml
         Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/update.xml")
         request.Method = "GET"
@@ -56,8 +60,9 @@ Class about
     End Sub
 
     Private Sub bt_copy_Click(sender As Object, e As RoutedEventArgs) Handles bt_copy.Click
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
         Clipboard.Clear() ' 清除剪贴板
-        Clipboard.SetText("工具版本：" & My.Application.Info.Version.ToString & vbCrLf & "版本状态：" & My.Application.Info.Description & vbCrLf & "运行路径：" & My.Application.Info.DirectoryPath & vbCrLf & "GUID:" & data("Tools")("GUID")) ' 拷贝数据到粘贴板
+        Clipboard.SetText("工具版本：" & My.Application.Info.Version.ToString & vbCrLf & "版本状态：" & My.Application.Info.Description & vbCrLf & "运行路径：" & My.Application.Info.DirectoryPath & vbCrLf & "GUID:" & Data("Tools")("GUID")) ' 拷贝数据到粘贴板
         Dim dialog As ContentDialog = New ContentDialog() With {
                                            .Title = "复制成功",
                                            .CloseButtonText = "我知道了",

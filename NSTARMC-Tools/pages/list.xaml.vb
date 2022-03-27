@@ -14,8 +14,12 @@ Class list
     Dim del_dir
     Dim local_id, url_online, year_ol, month_ol, day_ol, year_l, month_l, day_l, upd_dir '定义更新部分使用变量
     Dim parser = New FileIniDataParser()
-    Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
+        If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\")
+            System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
+        End If
         Dim homepagestart As Thread = New Thread(AddressOf Homepagestartthread)
         homepagestart.Start()
     End Sub
@@ -403,6 +407,7 @@ Class list
     End Function
     '更新线程
     Private Async Function Upd_ver_mainAsync(ByVal objParamReport As Object) As Task(Of String)
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
         mclist.Dispatcher.Invoke(New Action(Sub()
                                                 dw_card.Visibility = Visibility.Visible
                                                 dw_pro.Visibility = Visibility.Visible
@@ -418,7 +423,7 @@ Class list
             '新下载模块
             Dim downloadOpt = New DownloadConfiguration()
             downloadOpt.BufferBlockSize = 10240 '文件缓冲区大小
-            downloadOpt.ChunkCount = data("Download")("Thread") '下载线程数量
+            downloadOpt.ChunkCount = Data("Download")("Thread") '下载线程数量
             downloadOpt.MaximumBytesPerSecond = 0 '下载限速
             downloadOpt.Timeout = 1000 '超时
             downloadOpt.MaxTryAgainOnFailover = Integer.MaxValue

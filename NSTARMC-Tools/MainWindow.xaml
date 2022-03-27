@@ -9,7 +9,7 @@
         Title="NSTAR整合包工具" Height="550" Width="900"
         ui:WindowHelper.UseModernWindowStyle="True"
         xmlns:ui="http://schemas.modernwpf.com/2019"
-        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" Loaded="Window_Loaded" MinWidth="800" MinHeight="450" >
+        xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" Loaded="Window_Loaded" MinWidth="800" MinHeight="450" Initialized="Window_Initialized" >
 
 
     <Grid>

@@ -12,8 +12,12 @@ Class java
     Dim java_ver
     Dim DWFilename, DWUrl, DWFn, DWS, DWDir, DWDir_up '定义下载线程调用变量
     Dim parser = New FileIniDataParser()
-    Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+
     Private Sub Page_Loaded_1(sender As Object, e As RoutedEventArgs)
+        If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\")
+            System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
+        End If
         Dim homepagestart As Thread = New Thread(AddressOf Homepagestartthread)
         homepagestart.Start()
     End Sub
@@ -117,6 +121,7 @@ Class java
     End Sub
 
     Private Async Function Dw_java_threadAsync(ByVal objParamReport As Object) As Task(Of String)
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
         If Directory.Exists(DWDir & "\jre-x64") = True Then
             Directory.Delete(DWDir & "\jre-x64", True)
@@ -126,7 +131,7 @@ Class java
             '新下载模块
             Dim downloadOpt = New DownloadConfiguration()
             downloadOpt.BufferBlockSize = 10240 '文件缓冲区大小
-            downloadOpt.ChunkCount = data("Download")("Thread") '下载线程数量
+            downloadOpt.ChunkCount = Data("Download")("Thread") '下载线程数量
             downloadOpt.MaximumBytesPerSecond = 0 '下载限速
             downloadOpt.Timeout = 1000 '超时
             downloadOpt.MaxTryAgainOnFailover = Integer.MaxValue

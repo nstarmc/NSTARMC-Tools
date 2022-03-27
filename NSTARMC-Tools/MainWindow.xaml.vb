@@ -56,15 +56,16 @@ Class MainWindow
 
         '配置文件前置
         If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
-            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools")
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\")
             System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
         End If
         Dim parser = New FileIniDataParser()
         Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
-        If data("UI")("Sidebar") = "Left" Then
-            NavView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left
-        Else
+        If data("UI")("Sidebar") = "Top" Then
             NavView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top
+        Else
+            NavView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left
+
         End If
         If data("UI")("AutoTheme") = "False" Then
             If data("UI")("Theme") = "Dark" Then
@@ -94,11 +95,11 @@ Class MainWindow
         If data("UI")("Background") = "False" Then
 
         Else
-            If File.Exists(My.Application.Info.DirectoryPath & "\Background\bg2.png") Then
-                File.Delete(My.Application.Info.DirectoryPath & "\Background\bg.png")
-                Rename(My.Application.Info.DirectoryPath & "\Background\bg2.png", My.Application.Info.DirectoryPath & "\Background\bg.png")
+            If File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg2.png") Then
+                File.Delete(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg.png")
+                Rename(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg2.png", My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg.png")
                 Dim brush As New ImageBrush()
-                brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\Background\bg.png", UriKind.Absolute))
+                brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg.png", UriKind.Absolute))
                 NavView.Background = brush
                 NavView.Background.Opacity = data("UI")("Background_Opacity")
 
@@ -118,8 +119,8 @@ Class MainWindow
                 Dim MyValue As Integer
                 Randomize()
                 MyValue = CInt(Int((i * Rnd()) + 0))
-                Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\Background\")
-                Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\Background\bg2.png")
+                Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\")
+                Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg2.png")
                 Dim segmentFileDownloader = New SegmentFileDownloader(olbg_list(MyValue), info)
                 Await segmentFileDownloader.DownloadFileAsync()
             Else
@@ -144,8 +145,8 @@ Class MainWindow
                 Dim MyValue As Integer
                 Randomize()
                 MyValue = CInt(Int((i * Rnd()) + 0))
-                Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\Background\")
-                Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\Background\bg2.png")
+                Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\")
+                Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg2.png")
                 Dim segmentFileDownloader = New SegmentFileDownloader(olbg_list(MyValue), info)
                 Await segmentFileDownloader.DownloadFileAsync()
 
@@ -236,5 +237,13 @@ Class MainWindow
     End Sub
     Public Sub ChangeDW()
 
+    End Sub
+
+    Private Sub Window_Initialized(sender As Object, e As EventArgs)
+        '配置文件前置
+        If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\")
+            System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
+        End If
     End Sub
 End Class

@@ -13,8 +13,12 @@ Class Homepage
     Dim checkupdate = 0
     Dim local_id, url_online, year_ol, month_ol, day_ol, year_l, month_l, day_l, upd_dir '定义检查更新部分使用变量
     Dim parser = New FileIniDataParser()
-    Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
+        If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools")
+            System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
+        End If
         Dim homepagestart As Thread = New Thread(AddressOf HomepagestartthreadAsync)
         homepagestart.Start()
     End Sub
@@ -112,7 +116,7 @@ Class Homepage
     End Function
 
     Private Async Function HomepagestartthreadAsync(ByVal objParamReport As Object) As Task(Of String)
-
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
         '检查工具更新
         Dim checkupdate As Thread = New Thread(AddressOf CheckupdatethreadAsync)
         checkupdate.Start()
@@ -305,6 +309,7 @@ Class Homepage
     End Sub
 
     Private Sub lauch_1_Click(sender As Object, e As RoutedEventArgs) Handles lauch_1.Click
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
         For Each dirlist In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\")
             If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
 
@@ -327,7 +332,7 @@ Class Homepage
                         p.StandardInput.WriteLine("PCL2.exe") '这个Data就是cmd命令
                         p.StandardInput.WriteLine("exit") '这个Data就是cmd命令
                         p.WaitForExit()
-                        If data("Tools")("AutoClose") = "False" Then
+                        If Data("Tools")("AutoClose") = "False" Then
                         Else
 
                             End
@@ -342,6 +347,7 @@ Class Homepage
     End Sub
 
     Private Sub lauch_2_Click(sender As Object, e As RoutedEventArgs) Handles lauch_2.Click
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
         For Each dirlist In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\")
             If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
 
@@ -364,7 +370,7 @@ Class Homepage
                         p.StandardInput.WriteLine("HMCL.exe") '这个Data就是cmd命令
                         p.StandardInput.WriteLine("exit") '这个Data就是cmd命令
                         p.WaitForExit()
-                        If data("Tools")("AutoClose") = "False" Then
+                        If Data("Tools")("AutoClose") = "False" Then
                         Else
 
                             End

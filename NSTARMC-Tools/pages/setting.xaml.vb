@@ -20,15 +20,21 @@ Class setting
             parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
             'My.Settings.theme = "Dark"
             'My.Settings.Save()
-            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark
-            Theme.Manager.Switch(Theme.Style.Dark)
+            If Not data("UI")("AutoTheme") = "True" Then
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark
+                Theme.Manager.Switch(Theme.Style.Dark)
+            End If
+
         Else
             data("UI")("Theme") = "Light"
             parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
             'My.Settings.theme = "Light"
             'My.Settings.Save()
-            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light
-            Theme.Manager.Switch(Theme.Style.Light)
+            If Not data("UI")("AutoTheme") = "True" Then
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light
+                Theme.Manager.Switch(Theme.Style.Light)
+            End If
+
         End If
     End Sub
 
