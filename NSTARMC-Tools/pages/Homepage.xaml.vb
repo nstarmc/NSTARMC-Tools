@@ -3,6 +3,8 @@ Imports System.Net
 Imports System.Text
 Imports System.Threading
 Imports dotnetCampus.FileDownloader
+Imports IniParser
+Imports IniParser.Model
 Imports ModernWpf.Controls
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
@@ -10,6 +12,8 @@ Imports Newtonsoft.Json.Linq
 Class Homepage
     Dim checkupdate = 0
     Dim local_id, url_online, year_ol, month_ol, day_ol, year_l, month_l, day_l, upd_dir '定义检查更新部分使用变量
+    Dim parser = New FileIniDataParser()
+    Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
         Dim homepagestart As Thread = New Thread(AddressOf HomepagestartthreadAsync)
         homepagestart.Start()
@@ -144,7 +148,11 @@ Class Homepage
         '                                                 End Sub))
 
         '        End If
-        If My.Settings.dialogv < notice.<dialogv>.Value.ToString Then
+        If data("Tools")("Announcement") = "" Then
+            data("Tools")("Announcement") = "0"
+            parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
+        End If
+        If Int(data("Tools")("Announcement")) < notice.<dialogv>.Value.ToString Then
             notice1.Dispatcher.Invoke(New Action(Async Sub()
                                                      Dim dialog As ContentDialog = New ContentDialog() With {
                                                             .Title = notice.<dialogt>.Value,
@@ -155,8 +163,8 @@ Class Homepage
                                                         }
                                                      Dim result As ContentDialogResult = Await dialog.ShowAsync()
                                                      If result = ContentDialogResult.Primary Then
-                                                         My.Settings.dialogv = notice.<dialogv>.Value.ToString
-                                                         My.Settings.Save()
+                                                         data("Tools")("Announcement") = notice.<dialogv>.Value.ToString
+                                                         parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
                                                      End If
                                                  End Sub))
         End If
@@ -319,7 +327,9 @@ Class Homepage
                         p.StandardInput.WriteLine("PCL2.exe") '这个Data就是cmd命令
                         p.StandardInput.WriteLine("exit") '这个Data就是cmd命令
                         p.WaitForExit()
-                        If My.Settings.endwhengamestart = True Then
+                        If data("Tools")("AutoClose") = "False" Then
+                        Else
+
                             End
                         End If
                     Catch ex As Exception
@@ -354,7 +364,9 @@ Class Homepage
                         p.StandardInput.WriteLine("HMCL.exe") '这个Data就是cmd命令
                         p.StandardInput.WriteLine("exit") '这个Data就是cmd命令
                         p.WaitForExit()
-                        If My.Settings.endwhengamestart = True Then
+                        If data("Tools")("AutoClose") = "False" Then
+                        Else
+
                             End
                         End If
                     Catch ex As Exception

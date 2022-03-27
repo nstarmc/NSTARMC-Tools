@@ -6,6 +6,8 @@ Imports System.Linq
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports dotnetCampus.FileDownloader
+Imports IniParser
+Imports IniParser.Model
 
 Class MainWindow
     Dim _page_java As java = New java()
@@ -17,37 +19,63 @@ Class MainWindow
     Dim _page_feedback As feedback = New feedback()
     Dim _page_help As help = New help()
     Private Sub NavView_SelectionChanged(sender As ModernWpf.Controls.NavigationView, args As ModernWpf.Controls.NavigationViewSelectionChangedEventArgs) Handles NavView.SelectionChanged
-        If NavView.SelectedItem.Content.ToString = "首页" Then
-            frame.Content = _page_homepage
-            _page_homepage.ParentWindow = Me
-        End If
-        If NavView.SelectedItem.Content.ToString = "帮助" Then
-            frame.Content = _page_help
-        End If
-        If NavView.SelectedItem.Content.ToString = "设置" Or NavView.SelectedItem.Content.ToString = "Settings" Then
+        If args.IsSettingsSelected Then
             frame.Content = _page_setting
             _page_setting.ParentWindow = Me
+        Else
+            If NavView.SelectedItem.Content.ToString = "首页" Then
+                frame.Content = _page_homepage
+                _page_homepage.ParentWindow = Me
+            End If
+            If NavView.SelectedItem.Content.ToString = "帮助" Then
+                frame.Content = _page_help
+            End If
+
+            If NavView.SelectedItem.Content.ToString = "Java下载" Then
+                frame.Content = _page_java
+            End If
+            If NavView.SelectedItem.Content.ToString = "关于" Then
+                frame.Content = _page_about
+            End If
+            If NavView.SelectedItem.Content.ToString = "下载整合包" Then
+                frame.Content = _page_download
+            End If
+            If NavView.SelectedItem.Content.ToString = "版本列表" Then
+                frame.Content = _page_list
+            End If
+            If NavView.SelectedItem.Content.ToString = "意见反馈" Then
+                frame.Content = _page_feedback
+            End If
         End If
-        If NavView.SelectedItem.Content.ToString = "Java下载" Then
-            frame.Content = _page_java
-        End If
-        If NavView.SelectedItem.Content.ToString = "关于" Then
-            frame.Content = _page_about
-        End If
-        If NavView.SelectedItem.Content.ToString = "下载整合包" Then
-            frame.Content = _page_download
-        End If
-        If NavView.SelectedItem.Content.ToString = "版本列表" Then
-            frame.Content = _page_list
-        End If
-        If NavView.SelectedItem.Content.ToString = "意见反馈" Then
-            frame.Content = _page_feedback
-        End If
+
     End Sub
 
     Private Async Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
+        Dim currentUser As System.Security.Principal.WindowsIdentity = System.Security.Principal.WindowsIdentity.GetCurrent()
+        Dim sid As String = currentUser.User.ToString()
 
-        If My.Settings.themebysys = True Then
+        '配置文件前置
+        If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools")
+            System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
+        End If
+        Dim parser = New FileIniDataParser()
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+        If data("UI")("Sidebar") = "Left" Then
+            NavView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left
+        Else
+            NavView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top
+        End If
+        If data("UI")("AutoTheme") = "False" Then
+            If data("UI")("Theme") = "Dark" Then
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark
+                Theme.Manager.Switch(Theme.Style.Dark)
+            Else
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light
+                Theme.Manager.Switch(Theme.Style.Light)
+
+            End If
+        Else
             If Theme.Manager.GetSystemTheme = Theme.Style.Dark Then
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark
                 Theme.Manager.Switch(Theme.Style.Dark)
@@ -55,24 +83,24 @@ Class MainWindow
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light
                 Theme.Manager.Switch(Theme.Style.Light)
             End If
-        Else
-            If My.Settings.theme = "Light" Then
-                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light
-                Theme.Manager.Switch(Theme.Style.Light)
-            Else
-                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark
-                Theme.Manager.Switch(Theme.Style.Dark)
-            End If
+
+        End If
+        '标定背景透明度（初始化）
+        If data("UI")("Background_Opacity") = "" Then
+            data("UI")("Background_Opacity") = "0.68"
+            parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
         End If
 
-        If My.Settings.bg = True Then
+        If data("UI")("Background") = "False" Then
+
+        Else
             If File.Exists(My.Application.Info.DirectoryPath & "\Background\bg2.png") Then
                 File.Delete(My.Application.Info.DirectoryPath & "\Background\bg.png")
                 Rename(My.Application.Info.DirectoryPath & "\Background\bg2.png", My.Application.Info.DirectoryPath & "\Background\bg.png")
                 Dim brush As New ImageBrush()
                 brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\Background\bg.png", UriKind.Absolute))
                 NavView.Background = brush
-                NavView.Background.Opacity = My.Settings.bgtoumingdu
+                NavView.Background.Opacity = data("UI")("Background_Opacity")
 
                 Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/olbg.json")
                 request.Method = "GET"
@@ -98,7 +126,7 @@ Class MainWindow
                 Dim brush As New ImageBrush()
                 brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
                 NavView.Background = brush
-                NavView.Background.Opacity = My.Settings.bgtoumingdu
+                NavView.Background.Opacity = data("UI")("Background_Opacity")
 
                 Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/olbg.json")
                 request.Method = "GET"
@@ -120,6 +148,7 @@ Class MainWindow
                 Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\Background\bg2.png")
                 Dim segmentFileDownloader = New SegmentFileDownloader(olbg_list(MyValue), info)
                 Await segmentFileDownloader.DownloadFileAsync()
+
             End If
             'Dim brush As New ImageBrush()
             'brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
@@ -151,18 +180,33 @@ Class MainWindow
             'frame.Background.Opacity = My.Settings.bgtoumingdu
         End If
     End Sub
+    Public Async Sub Changesidebar()
 
+        '配置文件前置
+        If Not System.IO.File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini") Then
+            IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools")
+            System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
+        End If
+        Dim parser = New FileIniDataParser()
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+        If data("UI")("Sidebar") = "Left" Then
+            NavView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left
+        Else
+            NavView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top
+        End If
+    End Sub
     Public Async Sub ChangeBG(ByVal opa As String)
-        If File.Exists(My.Application.Info.DirectoryPath & "\Background\bg.png") Then
+
+        If File.Exists(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg.png") Then
             Dim brush As New ImageBrush()
-            brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\Background\bg.png", UriKind.Absolute))
+            brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg.png", UriKind.Absolute))
             NavView.Background = brush
-            NavView.Background.Opacity = My.Settings.bgtoumingdu
+            NavView.Background.Opacity = opa
         Else
             Dim brush As New ImageBrush()
             brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
             NavView.Background = brush
-            NavView.Background.Opacity = My.Settings.bgtoumingdu
+            NavView.Background.Opacity = opa
 
             Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/olbg.json")
             request.Method = "GET"
@@ -180,13 +224,13 @@ Class MainWindow
             Dim MyValue As Integer
             Randomize()
             MyValue = CInt(Int((i * Rnd()) + 0))
-            Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\Background\")
-            Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\Background\bg.png")
+            Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\")
+            Dim info As FileInfo = New FileInfo(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg.png")
             Dim segmentFileDownloader = New SegmentFileDownloader(olbg_list(MyValue), info)
             Await segmentFileDownloader.DownloadFileAsync()
-            brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\Background\bg.png", UriKind.Absolute))
+            brush.ImageSource = New BitmapImage(New Uri(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Background\bg.png", UriKind.Absolute))
             NavView.Background = brush
-            NavView.Background.Opacity = My.Settings.bgtoumingdu
+            NavView.Background.Opacity = opa
         End If
 
     End Sub

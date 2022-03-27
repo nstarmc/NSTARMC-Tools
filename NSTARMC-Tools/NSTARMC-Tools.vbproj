@@ -226,6 +226,9 @@
     <PackageReference Include="Downloader">
       <Version>2.3.3</Version>
     </PackageReference>
+    <PackageReference Include="ini-parser">
+      <Version>2.5.2</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
       <Version>1.0.1133-prerelease</Version>
     </PackageReference>

@@ -5,6 +5,8 @@ Imports System.Threading
 Imports Downloader
 Imports ICSharpCode.SharpZipLib.Core
 Imports ICSharpCode.SharpZipLib.Zip
+Imports IniParser
+Imports IniParser.Model
 Imports ModernWpf.Controls
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
@@ -12,6 +14,8 @@ Imports Newtonsoft.Json.Linq
 Class download
     Dim down_url, packid, down_ver
     Dim allow_download = 0
+    Dim parser = New FileIniDataParser()
+    Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
 
 
     Private Sub Page_Loaded(sender As Object, e As RoutedEventArgs)
@@ -140,6 +144,7 @@ Class download
                                                            dialog.ShowAsync()
                                                            dw_info.Text = "没有正在进行的下载任务哦~"
                                                            dw_pro.IsActive = False
+                                                           bt_startdw.IsEnabled = True
                                                        End Sub))
         Else
 
@@ -152,88 +157,32 @@ Class download
     'Public Event DownloadProgressChanged As EventHandler(Of Downloader.DownloadProgressChangedEventArgs)
 
     Public Async Sub Dwfile_threadAsync(ByVal objParamReport As Object)
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
-        '新下载模块
-        Dim downloadOpt = New DownloadConfiguration()
-        downloadOpt.BufferBlockSize = 10240 '文件缓冲区大小
-        downloadOpt.ChunkCount = My.Settings.dw_thread '下载线程数量
-        downloadOpt.MaximumBytesPerSecond = 0 '下载限速
-        downloadOpt.Timeout = 1000 '超时
-        downloadOpt.MaxTryAgainOnFailover = Integer.MaxValue
-        downloadOpt.OnTheFlyDownload = False
-        downloadOpt.ParallelDownload = True
-        downloadOpt.TempDirectory = "C:\temp"
-        downloadOpt.RequestConfiguration.Accept = "*/*"
-        downloadOpt.RequestConfiguration.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
-        downloadOpt.RequestConfiguration.CookieContainer = New CookieContainer()
-        downloadOpt.RequestConfiguration.Headers = New WebHeaderCollection()
-        downloadOpt.RequestConfiguration.KeepAlive = False
-        downloadOpt.RequestConfiguration.ProtocolVersion = HttpVersion.Version11
-        downloadOpt.RequestConfiguration.UseDefaultCredentials = False
-        downloadOpt.RequestConfiguration.UserAgent = ""
-        Dim downloader = New DownloadService(downloadOpt)
-        AddHandler downloader.DownloadProgressChanged, AddressOf OnDownloadProgressChanged
-        Await downloader.DownloadFileTaskAsync(down_url.ToString, My.Application.Info.DirectoryPath & "\file\download.zip")
+
 
         Try
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
+            '新下载模块
+            Dim downloadOpt = New DownloadConfiguration()
+            downloadOpt.BufferBlockSize = 10240 '文件缓冲区大小
+            downloadOpt.ChunkCount = data("Download")("Thread") '下载线程数量
+            downloadOpt.MaximumBytesPerSecond = 0 '下载限速
+            downloadOpt.Timeout = 1000 '超时
+            downloadOpt.MaxTryAgainOnFailover = Integer.MaxValue
+            downloadOpt.OnTheFlyDownload = False
+            downloadOpt.ParallelDownload = True
+            downloadOpt.TempDirectory = "C:\temp"
+            downloadOpt.RequestConfiguration.Accept = "*/*"
+            downloadOpt.RequestConfiguration.AutomaticDecompression = DecompressionMethods.GZip Or DecompressionMethods.Deflate
+            downloadOpt.RequestConfiguration.CookieContainer = New CookieContainer()
+            downloadOpt.RequestConfiguration.Headers = New WebHeaderCollection()
+            downloadOpt.RequestConfiguration.KeepAlive = False
+            downloadOpt.RequestConfiguration.ProtocolVersion = HttpVersion.Version11
+            downloadOpt.RequestConfiguration.UseDefaultCredentials = False
+            downloadOpt.RequestConfiguration.UserAgent = ""
+            Dim downloader = New DownloadService(downloadOpt)
+            AddHandler downloader.DownloadProgressChanged, AddressOf OnDownloadProgressChanged
+            Await downloader.DownloadFileTaskAsync(down_url.ToString, My.Application.Info.DirectoryPath & "\file\download.zip")
 
-            ''下载
-            'Dim hwq As HttpWebRequest
-            'Dim hwp As HttpWebResponse
-            'Dim colHeader As WebHeaderCollection  '响应头信息集合
-            'Dim lngSize As Int64                  '要下载文件的总大小
-            'Dim lngCurSize As Int64               '已经下载大小
-            'Dim lngNet As Int64                   '计算网速用
-
-            'Dim stRespones As Stream              '响应流
-            'Dim st As FileStream                  '本地流
-            'Dim intCurSize As Int64
-            'Dim bytBuffer(512) As Byte           '缓存大小
-
-            'Dim datLast As DateTime               '最后一次时间
-            'Dim intDiff As Int32                  '两次时间差（秒）
-
-            'datLast = Now   '取得开始时间
-            'hwq = CType(HttpWebRequest.Create(down_url.ToString), HttpWebRequest) '请求对象创建
-            'hwp = hwq.GetResponse        '取得响应对象
-            'colHeader = hwp.Headers      '取得响应头
-            'lngSize = colHeader.Get("Content-Length")  '取得要下载文件的大小
-
-            'stRespones = hwp.GetResponseStream '取得响应流
-            'st = New FileStream(My.Application.Info.DirectoryPath & "\file\download.zip", FileMode.Create) '本地保存文件
-
-            'intCurSize = stRespones.Read(bytBuffer, 0, bytBuffer.Length) '响应流中读取
-
-            'Do While (intCurSize > 0) '只要有数据就继续
-            '    st.Write(bytBuffer, 0, intCurSize)     '写入本地文件
-            '    intDiff = DateDiff(DateInterval.Second, datLast, Now)
-
-
-            '    lngCurSize = lngCurSize + intCurSize
-            '    lngNet = lngNet + intCurSize              '单位时间内的下载量
-            '    If intDiff >= 1 Then
-            '        dw_info.Dispatcher.Invoke(New Action(Sub()
-            '                                                 dw_info.Text =
-            '                                             "文件大小：" & FormatNumber(lngSize / 1024 / 1024, 2, vbTrue).ToString & " MB" &
-            '                                             "/" & FormatNumber(lngCurSize / 1024 / 1024, 2, vbTrue).ToString & " MB" & vbCrLf &
-            '                                             "当前速度：" & Math.Round(lngNet / intDiff / 1024 / 1024, 2).ToString & "MB/s"
-            '                                                 dw_pro.IsEnabled = True
-            '                                             End Sub))
-            '        datLast = Now
-            '        lngNet = 0
-            '    End If
-            '    intCurSize = stRespones.Read(bytBuffer, 0, bytBuffer.Length) '继续读取
-            'Loop
-            'st.Close()
-            'stRespones.Close()
-            'dw_info.Dispatcher.Invoke(New Action(Sub()
-            '                                         dw_info.Text = "下载完成"
-            '                                     End Sub))
-            'lngSize = 0
-            'lngCurSize = 0
-            'lngNet = 0
-            'intDiff = 0
-            'lngCurSize = 0
 
             '解压进程
             dw_info.Dispatcher.Invoke(New Action(Sub()

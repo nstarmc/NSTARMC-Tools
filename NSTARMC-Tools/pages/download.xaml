@@ -9,7 +9,8 @@
       xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
       xmlns:ui="http://schemas.modernwpf.com/2019" Loaded="Page_Loaded">
     <Grid>
-        <StackPanel>
+
+        <StackPanel Grid.ColumnSpan="2">
             <wpfui:CardControl Icon="ArrowDownload16" Margin="12,18,16,0" Title="下载NSTAR系列整合包" Subtitle="你可以在下方进行下载NSTAR系列整合包~"/>
             <TextBlock Margin="12,18,16,0" Text="自动下载"/>
             <StackPanel Orientation="Horizontal">
@@ -27,16 +28,16 @@
                 </wpfui:Card>
                 <StackPanel>
 
-                <wpfui:Card Margin="12,18,16,0">
-                    <StackPanel>
+                    <wpfui:Card Margin="12,18,16,0">
+                        <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="开始下载" x:Name="bt_startdw" Click="Button_Click" Style="{StaticResource AccentButtonStyle}"></Button>
-                        <ui:ProgressRing x:Name="dw_pro" Margin="6,0,6,0"/>
-                                
-                    </StackPanel>
+                                <ui:ProgressRing x:Name="dw_pro" Margin="6,0,6,0"/>
+
+                            </StackPanel>
                             <TextBlock x:Name="dw_info" Text="当前没有下载任务哦~"/>
                         </StackPanel>
-                </wpfui:Card>
+                    </wpfui:Card>
                 </StackPanel>
             </StackPanel>
             <TextBlock Margin="12,18,16,0" Text="手动下载"/>

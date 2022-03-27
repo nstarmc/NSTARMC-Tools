@@ -6,13 +6,13 @@
       xmlns:local="clr-namespace:NSTARMC_Tools"
       mc:Ignorable="d" 
       xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="600" d:DesignWidth="800"
       Title="about"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:wu="clr-namespace:WPFUI.Controls;assembly=WPFUI"
       xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" Loaded="Page_Loaded" ScrollViewer.VerticalScrollBarVisibility="Auto">
     <Grid>
-        <StackPanel>
+        <StackPanel Margin="0,0,0,0">
             <wu:CardControl Title="关于本工具" Subtitle="本工具为夜阑星空（NSTAR）整合包的集合工具" Margin="12,8,16,0" Icon="PersonAccounts24">
                
                     <wu:Hyperlink Content="打开官网" Cursor="Hand" Padding="4" NavigateUri="https://www.mcbbs.net/thread-1025346-1-1.html" />
@@ -33,11 +33,33 @@
                     <TextBlock Text="加载中···" x:Name="upfu"></TextBlock>
                 </StackPanel>
             </wpfui:CardExpander>
-            <wpfui:CardExpander  Header="更新日志"  Subtitle="以下为本工具的更新日志" Margin="12,8,16,8" Icon="History16">
+            <wpfui:CardExpander  Header="更新日志"  Subtitle="以下为本工具的更新日志" Margin="12,8,16,0" Icon="History16">
                 <StackPanel Margin="5" Orientation="Horizontal">
                     <TextBlock Text="加载中···" x:Name="uphist"></TextBlock>
                 </StackPanel>
             </wpfui:CardExpander>
+            <wpfui:Card Margin="12,8,16,8" >
+                <StackPanel>
+                    <TextBlock Text="加密测试(暂时用不到该功能,如果用的话,软件将闭源)"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="加密内容:" Margin="0,0,6,0"/>
+                        <TextBox x:Name="text_pwd" TextWrapping="Wrap" MaxWidth="500"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="GUID:" Margin="0,0,6,0"/>
+                        <TextBox x:Name="text_guid" IsReadOnly="True"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="SID:" Margin="0,0,6,0"/>
+                        <TextBox x:Name="text_sid" IsReadOnly="True"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="KEY:" Margin="0,0,6,0"/>
+                        <TextBox x:Name="text_key" Margin="0,0,6,0"/>
+                        <Button x:Name="button_key" Content="加密" Style="{StaticResource AccentButtonStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </wpfui:Card>
         </StackPanel>
     </Grid>
 </Page>
