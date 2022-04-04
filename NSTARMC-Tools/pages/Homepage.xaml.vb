@@ -22,7 +22,8 @@ Class Homepage
         Dim homepagestart As Thread = New Thread(AddressOf HomepagestartthreadAsync)
         homepagestart.Start()
     End Sub
-    Private Async Function CheckupdatethreadAsync(ByVal objParamReport As Object) As Task(Of String)
+    Private Async Sub CheckupdatethreadAsync(ByVal objParamReport As Object)
+
 
         Try
             File.Delete(My.Application.Info.DirectoryPath & "\upd.bat")
@@ -78,6 +79,8 @@ Class Homepage
                                                             .Content = "有新版本的整合包工具！" & vbCrLf & "新版本已经下载完成，你只需要点击更新按钮，" & vbCrLf & "我们将为您替换为新版本，并重启工具！" & vbCrLf & "快去更新吧！" & vbCrLf & "#更新内容：" & vbCrLf & tool_xml.<content>.Value
                                                         }
                                                         Await dialog.ShowAsync()
+                                                        Dim ths2 As Thread = New Thread(AddressOf start2)
+                                                        ths2.Start()
                                                         Dim p As New Process()
                                                         p.StartInfo.FileName = "cmd.exe"
                                                         p.StartInfo.UseShellExecute = False
@@ -89,11 +92,94 @@ Class Homepage
                                                         p.StandardInput.WriteLine("start "" "" upd.vbs") '这个Data就是cmd命令
                                                         End
                                                     End Sub))
+            Else
+                Dim ths2 As Thread = New Thread(AddressOf start2)
+                ths2.Start()
             End If
         End If
 
-    End Function
-    Private Function onesay_thr(ByVal objParamReport As Object) As String
+    End Sub
+    Private Sub start2()
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+        '获取公告内容
+        '发送get请求，获取xml
+        Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/notice.xml")
+        request.Method = "GET"
+        Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+        Dim notice As XElement = XElement.Parse(sr.ReadToEnd)
+        notice1.Dispatcher.Invoke(New Action(Sub()
+                                                 notice1.Subtitle = notice.<announcement>.Value & vbCrLf & "公告发布日期：" & notice.<date>.Value
+                                             End Sub))
+
+        If Data("Tools")("Announcement") = "" Then
+            Data("Tools")("Announcement") = "0"
+            parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", Data)
+        End If
+        If Int(Data("Tools")("Announcement")) < notice.<dialogv>.Value.ToString Then
+            notice1.Dispatcher.Invoke(New Action(Async Sub()
+                                                     Dim dialog As ContentDialog = New ContentDialog() With {
+                                                            .Title = notice.<dialogt>.Value,
+                                                            .CloseButtonText = "我知道啦",
+                                                            .PrimaryButtonText = "不再提示",
+                                                            .DefaultButton = ContentDialogButton.Primary,
+                                                            .Content = notice.<dialog>.Value
+                                                        }
+                                                     Dim result As ContentDialogResult = Await dialog.ShowAsync()
+                                                     Dim ths2 As Thread = New Thread(AddressOf readpack)
+                                                     ths2.Start()
+                                                     If result = ContentDialogResult.Primary Then
+                                                         data("Tools")("Announcement") = notice.<dialogv>.Value.ToString
+                                                         parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
+                                                     End If
+                                                 End Sub))
+        Else
+            Dim ths2 As Thread = New Thread(AddressOf readpack)
+            ths2.Start()
+        End If
+
+
+    End Sub
+    Private Sub readpack()
+        '读取整合包
+        mclist.Dispatcher.Invoke(New Action(Sub()
+                                                mclist.Items.Clear()
+                                            End Sub))
+        For Each dirlist In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\")
+            If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
+
+                '检测到文件夹内为符合格式的整合包，加载
+                Dim info_reader As String = My.Computer.FileSystem.ReadAllText(dirlist & "\info.xml")
+                Dim info_xml As XElement = XElement.Parse(info_reader)
+                mclist.Dispatcher.Invoke(New Action(Sub()
+                                                        mclist.Items.Add(info_xml.<mcversion>.Value & " - " & info_xml.<modloader>.Value & "(" & info_xml.<sharder>.Value & ")")
+
+                                                    End Sub))
+            End If
+        Next
+        If mclist.Items.Count = 0 Then
+            mclist.Dispatcher.Invoke(New Action(Async Sub()
+                                                    mclist.IsEnabled = False
+                                                    Dim dialog As ContentDialog = New ContentDialog() With {
+                                                        .Title = "本地未检测到整合包文件~",
+                                                        .CloseButtonText = "我知道啦",
+                                                        .IsPrimaryButtonEnabled = False,
+                                                        .DefaultButton = ContentDialogButton.Close,
+                                                        .Content = "无法在工具下的File检测到有效格式的整合包！" & vbCrLf & "请在左侧导航栏进入下载页面下载整合包！" & vbCrLf & "或者请正确放置整合包文件后，重启工具再试！" & vbCrLf & "如还是无法检测，请在Q群求助！"
+                                                    }
+                                                    Await dialog.ShowAsync()
+                                                    'ParentWindow.ChangeDW()
+                                                End Sub))
+
+        Else
+
+            mclist.Dispatcher.Invoke(New Action(Sub()
+                                                    mclist.SelectedIndex = 0
+                                                    mclist.IsEnabled = True
+                                                End Sub))
+
+        End If
+    End Sub
+    Private Sub onesay_thr(ByVal objParamReport As Object)
         Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/onesay.json")
         request.Method = "GET"
         Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
@@ -113,16 +199,16 @@ Class Homepage
                                                  MyValue = CInt(Int((i * Rnd()) + 0))
                                                  one_say_card.Subtitle = onesay_list(MyValue)
                                              End Sub))
-    End Function
+    End Sub
 
-    Private Async Function HomepagestartthreadAsync(ByVal objParamReport As Object) As Task(Of String)
+    Private Sub HomepagestartthreadAsync(ByVal objParamReport As Object)
         Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
-        '检查工具更新
-        Dim checkupdate As Thread = New Thread(AddressOf CheckupdatethreadAsync)
-        checkupdate.Start()
-        '检查工具更新
+
+        '一言
         Dim onesay As Thread = New Thread(AddressOf onesay_thr)
         onesay.Start()
+        Dim checkupdate As Thread = New Thread(AddressOf CheckupdatethreadAsync)
+        checkupdate.Start()
         '获取公告内容
         '发送get请求，获取xml
         Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/notice.xml")
@@ -133,84 +219,7 @@ Class Homepage
                                                  notice1.Subtitle = notice.<announcement>.Value & vbCrLf & "公告发布日期：" & notice.<date>.Value
                                              End Sub))
 
-        '        Dim request2 As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/tool.xml")
-        '        request2.Method = "GET"
-        '        Dim sr2 As StreamReader = New StreamReader(request2.GetResponse().GetResponseStream)
-        '        Dim tool_xml As XElement = XElement.Parse(sr2.ReadToEnd)
-        '        If Not My.Settings.ver = My.Application.Info.Version.ToString Then
-        '            notice1.Dispatcher.Invoke(New Action(Sub()
-        '                                                     Dim dialog As ContentDialog = New ContentDialog() With {
-        '.Title = "NSTARMC-Tools V" & My.Application.Info.Version.ToString & "更新日志",
-        '.CloseButtonText = "我知道啦",
-        '.IsPrimaryButtonEnabled = False,
-        '.DefaultButton = ContentDialogButton.Close,
-        '.Content = tool_xml.<content>.Value
-        '}
-        '                                                     dialog.ShowAsync()
-        '                                                     My.Settings.ver = My.Application.Info.Version.ToString
-        '                                                     My.Settings.Save()
-        '                                                 End Sub))
-
-        '        End If
-        If data("Tools")("Announcement") = "" Then
-            data("Tools")("Announcement") = "0"
-            parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
-        End If
-        If Int(data("Tools")("Announcement")) < notice.<dialogv>.Value.ToString Then
-            notice1.Dispatcher.Invoke(New Action(Async Sub()
-                                                     Dim dialog As ContentDialog = New ContentDialog() With {
-                                                            .Title = notice.<dialogt>.Value,
-                                                            .CloseButtonText = "我知道啦",
-                                                            .PrimaryButtonText = "不再提示",
-                                                            .DefaultButton = ContentDialogButton.Primary,
-                                                            .Content = notice.<dialog>.Value
-                                                        }
-                                                     Dim result As ContentDialogResult = Await dialog.ShowAsync()
-                                                     If result = ContentDialogResult.Primary Then
-                                                         data("Tools")("Announcement") = notice.<dialogv>.Value.ToString
-                                                         parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
-                                                     End If
-                                                 End Sub))
-        End If
-        '读取整合包
-        mclist.Dispatcher.Invoke(New Action(Sub()
-                                                mclist.Items.Clear()
-                                            End Sub))
-        For Each dirlist In System.IO.Directory.GetDirectories(My.Application.Info.DirectoryPath & "\file\")
-            If My.Computer.FileSystem.FileExists(dirlist & "\info.xml") Then
-
-                '检测到文件夹内为符合格式的整合包，加载
-                Dim info_reader As String = My.Computer.FileSystem.ReadAllText(dirlist & "\info.xml")
-                Dim info_xml As XElement = XElement.Parse(info_reader)
-                mclist.Dispatcher.Invoke(New Action(Sub()
-                                                        mclist.Items.Add(info_xml.<mcversion>.Value & " - " & info_xml.<modloader>.Value & "(" & info_xml.<sharder>.Value & ")")
-
-                                                    End Sub))
-            End If
-        Next
-        If mclist.Items.Count = 0 Then
-            mclist.Dispatcher.Invoke(New Action(Sub()
-                                                    mclist.IsEnabled = False
-                                                    Dim dialog As ContentDialog = New ContentDialog() With {
-                                                        .Title = "本地未检测到整合包文件~",
-                                                        .CloseButtonText = "我知道啦",
-                                                        .IsPrimaryButtonEnabled = False,
-                                                        .DefaultButton = ContentDialogButton.Close,
-                                                        .Content = "无法在工具下的File检测到有效格式的整合包！" & vbCrLf & "请在左侧导航栏进入下载页面下载整合包！" & vbCrLf & "或者请正确放置整合包文件后，重启工具再试！" & vbCrLf & "如还是无法检测，请在Q群求助！"
-                                                    }
-                                                    dialog.ShowAsync()
-                                                    'ParentWindow.ChangeDW()
-                                                End Sub))
-
-        Else
-
-            mclist.Dispatcher.Invoke(New Action(Sub()
-                                                    mclist.SelectedIndex = 0
-                                                    mclist.IsEnabled = True
-                                                End Sub))
-
-        End If
-    End Function
+    End Sub
     Private _parentWin As MainWindow
 
     Public Property ParentWindow As MainWindow
@@ -287,18 +296,23 @@ Class Homepage
                         End If
                         If update_yes = 1 Then
                             '检测到更新，弹窗
-                            mclist.Dispatcher.Invoke(New Action(Sub()
+                            Try
+                                mclist.Dispatcher.Invoke(New Action(Async Sub()
 
-                                                                    verinfolabel.Content += vbCrLf & "该版本整合包存在新版本！"
-                                                                    Dim dialog As ContentDialog = New ContentDialog() With {
-                                                                        .Title = "有新的整合包版本！",
-                                                                        .CloseButtonText = "我知道啦",
-                                                                        .DefaultButton = ContentDialogButton.Close,
-                                                                        .Content = "检测到选中的整合包有新的版本！" & vbCrLf & "建议前往版本列表页面更新整合包~" & vbCrLf & "如果数据重要，建议先备份!"
-                                                                    }
-                                                                    dialog.ShowAsync()
+                                                                        verinfolabel.Content += vbCrLf & "该版本整合包存在新版本！"
+                                                                        Dim dialog As ContentDialog = New ContentDialog() With {
+                                                                            .Title = "有新的整合包版本！",
+                                                                            .CloseButtonText = "我知道啦",
+                                                                            .DefaultButton = ContentDialogButton.Close,
+                                                                            .Content = "检测到选中的整合包有新的版本！" & vbCrLf & "建议前往版本列表页面更新整合包~" & vbCrLf & "如果数据重要，建议先备份!"
+                                                                        }
+                                                                        Await dialog.ShowAsync()
 
-                                                                End Sub))
+                                                                    End Sub))
+                            Catch ex As Exception
+
+                            End Try
+
                         End If
                     End If
 
