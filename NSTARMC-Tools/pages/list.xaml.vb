@@ -102,6 +102,7 @@ Class list
                                                                                 month_ol = json2("update_time")("month").ToString
                                                                                 day_ol = json2("update_time")("date").ToString
                                                                                 url_online = json2("download")
+                                                                                his_card.Subtitle = json2("history")
                                                                                 Exit For
                                                                             End If
                                                                         End If

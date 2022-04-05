@@ -27,21 +27,24 @@
                     </StackPanel>
                 </wpfui:Card>
                 <StackPanel>
+                    <StackPanel>
+                        <wpfui:Card Margin="12,18,16,0">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="开始下载" x:Name="bt_startdw" Click="Button_Click" Style="{StaticResource AccentButtonStyle}"></Button>
+                                    <ui:ProgressRing x:Name="dw_pro" Margin="6,0,6,0"/>
 
-                    <wpfui:Card Margin="12,18,16,0">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="开始下载" x:Name="bt_startdw" Click="Button_Click" Style="{StaticResource AccentButtonStyle}"></Button>
-                                <ui:ProgressRing x:Name="dw_pro" Margin="6,0,6,0"/>
+                                </StackPanel>
+                                <TextBlock x:Name="dw_info" Text="当前没有下载任务哦~"/>
+                            </StackPanel >
+                        </wpfui:Card >
+                        <wpfui:CardControl Title="更新日志" Subtitle="获取中···" x:Name="his" Margin="12,18,16,0" Icon="History16"/>
+                    </StackPanel>
 
-                            </StackPanel>
-                            <TextBlock x:Name="dw_info" Text="当前没有下载任务哦~"/>
-                        </StackPanel>
-                    </wpfui:Card>
                 </StackPanel>
             </StackPanel>
             <TextBlock Margin="12,18,16,0" Text="手动下载"/>
-            <wpfui:CardExpander  Header="手动下载整合包" Subtitle="前往以下网站手动下载整合包&#13;PS:如果不是上方下载功能故障，不建议手动下载~" Margin="12,18,16,0" Icon="HandDraw24">
+            <wpfui:CardExpander  Header="手动下载整合包" Subtitle="前往以下网站手动下载整合包&#13;PS:如果不是上方下载功能故障，不建议手动下载~" Margin="12,18,16,16" Icon="HandDraw24">
                 <StackPanel Margin="5" Orientation="Horizontal">
                     <wpfui:Hyperlink NavigateUri="https://www.mcbbs.net/thread-1025346-1-1.html" 
                                             Content="MCBBS原帖" Padding="4" Cursor="Hand"/>

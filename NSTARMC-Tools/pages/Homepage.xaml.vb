@@ -22,7 +22,7 @@ Class Homepage
         Dim homepagestart As Thread = New Thread(AddressOf HomepagestartthreadAsync)
         homepagestart.Start()
     End Sub
-    Private Async Sub CheckupdatethreadAsync(ByVal objParamReport As Object)
+    Private Async Sub Checkupdatethread(ByVal objParamReport As Object)
 
 
         Try
@@ -41,6 +41,8 @@ Class Homepage
             request.Method = "GET"
             Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
             Dim tool_xml As XElement = XElement.Parse(sr.ReadToEnd)
+
+
             If My.Application.Info.Version.ToString < tool_xml.<version>.Value Then
                 notice1.Dispatcher.Invoke(New Action(Sub()
                                                          upinfo.Visibility = Visibility.Visible
@@ -92,10 +94,12 @@ Class Homepage
                                                         p.StandardInput.WriteLine("start "" "" upd.vbs") '这个Data就是cmd命令
                                                         End
                                                     End Sub))
-            Else
-                Dim ths2 As Thread = New Thread(AddressOf start2)
-                ths2.Start()
+
             End If
+
+        Else
+            Dim ths2 As Thread = New Thread(AddressOf start2)
+            ths2.Start()
         End If
 
     End Sub
@@ -111,11 +115,11 @@ Class Homepage
                                                  notice1.Subtitle = notice.<announcement>.Value & vbCrLf & "公告发布日期：" & notice.<date>.Value
                                              End Sub))
 
-        If Data("Tools")("Announcement") = "" Then
-            Data("Tools")("Announcement") = "0"
-            parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", Data)
+        If data("Tools")("Announcement") = "" Then
+            data("Tools")("Announcement") = "0"
+            parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
         End If
-        If Int(Data("Tools")("Announcement")) < notice.<dialogv>.Value.ToString Then
+        If Int(data("Tools")("Announcement")) < notice.<dialogv>.Value.ToString Then
             notice1.Dispatcher.Invoke(New Action(Async Sub()
                                                      Dim dialog As ContentDialog = New ContentDialog() With {
                                                             .Title = notice.<dialogt>.Value,
@@ -207,7 +211,7 @@ Class Homepage
         '一言
         Dim onesay As Thread = New Thread(AddressOf onesay_thr)
         onesay.Start()
-        Dim checkupdate As Thread = New Thread(AddressOf CheckupdatethreadAsync)
+        Dim checkupdate As Thread = New Thread(AddressOf Checkupdatethread)
         checkupdate.Start()
         '获取公告内容
         '发送get请求，获取xml

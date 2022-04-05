@@ -158,6 +158,45 @@ Class download
         End If
     End Function
 
+    Private Sub list_ver_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles list_ver.SelectionChanged
+        Dim his As Thread = New Thread(AddressOf his_get)
+        his.Start()
+    End Sub
+
+    Private Sub his_get()
+        '发送get请求，请求下载地址
+        Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/packlist.json")
+        request.Method = "GET"
+        Dim sr As StreamReader = New StreamReader(request.GetResponse().GetResponseStream)
+        Dim jsonback = sr.ReadToEnd '储存返回的json信息
+        sr.Close()
+        '处理json
+        Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
+
+        '遍历读取下载链接，id
+        For Each x In json("group")
+            downlod_group.Dispatcher.Invoke(New Action(Sub()
+                                                           Dim json3 As JObject = CType(JsonConvert.DeserializeObject(x.ToString), JObject)
+                                                           If json3("name") = downlod_group.SelectedItem Then
+                                                               For Each x2 In json3("list")
+                                                                   Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
+                                                                   If json2("version") = list_ver.SelectedItem Then
+                                                                       If json2("history") = "" Then
+                                                                           his.Subtitle = "整合包作者尚未填写更新日志"
+                                                                       Else
+                                                                           his.Subtitle = json2("history")
+                                                                       End If
+
+
+                                                                   End If
+
+                                                               Next
+                                                           End If
+
+                                                       End Sub))
+        Next
+    End Sub
+
     'Public Event DownloadProgressChanged As EventHandler(Of Downloader.DownloadProgressChangedEventArgs)
 
     Public Async Sub Dwfile_threadAsync(ByVal objParamReport As Object)

@@ -61,6 +61,12 @@ Class MainWindow
         End If
         Dim parser = New FileIniDataParser()
         Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+        If data("UI")("Windows_Size_Width") = "" Then
+        Else
+            Me.Width = data("UI")("Windows_Size_Width")
+            Me.Height = data("UI")("Windows_Size_Height")
+        End If
+
         If data("UI")("Sidebar") = "Top" Then
             NavView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top
         Else
@@ -268,5 +274,21 @@ Class MainWindow
             IO.Directory.CreateDirectory(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\")
             System.IO.File.Create(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini").Dispose()
         End If
+        Dim parser = New FileIniDataParser()
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+        If data("UI")("Windows_Size_Width") = "" Then
+        Else
+            Me.Width = data("UI")("Windows_Size_Width")
+            Me.Height = data("UI")("Windows_Size_Height")
+        End If
+    End Sub
+
+    Private Sub Window_SizeChanged(sender As Object, e As SizeChangedEventArgs)
+        Dim parser = New FileIniDataParser()
+        Dim data As IniData = parser.ReadFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini")
+        data("UI")("Windows_Size_Width") = Me.Width
+        parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
+        data("UI")("Windows_Size_Height") = Me.Height
+        parser.WriteFile(My.Application.Info.DirectoryPath & "\NSTARMC-Tools\Configuration.ini", data)
     End Sub
 End Class
