@@ -94,7 +94,9 @@ Class Homepage
                                                         p.StandardInput.WriteLine("start "" "" upd.vbs") '这个Data就是cmd命令
                                                         End
                                                     End Sub))
-
+            Else
+                Dim ths2 As Thread = New Thread(AddressOf start2)
+                ths2.Start()
             End If
 
         Else
