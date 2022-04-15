@@ -15,7 +15,7 @@
         <StackPanel Margin="0,0,0,0">
             <wu:CardControl Title="关于本工具" Subtitle="本工具为夜阑星空（NSTAR）整合包的集合工具" Margin="12,8,16,0" Icon="PersonAccounts24">
                
-                    <wu:Hyperlink Content="打开官网" Cursor="Hand" Padding="4" NavigateUri="https://www.mcbbs.net/thread-1025346-1-1.html" />
+                    <wu:Hyperlink Content="打开官网" Cursor="Hand" Padding="4" NavigateUri="https://packs.nstarmc.cn" />
             
             </wu:CardControl>
             <wu:CardControl Title="版本信息" Subtitle="本工具版本信息" Margin="12,8,16,0" Icon="Info16" x:Name="verinfo">

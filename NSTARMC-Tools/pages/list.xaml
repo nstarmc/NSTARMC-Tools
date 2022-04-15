@@ -28,6 +28,12 @@
                     </StackPanel>
                 </StackPanel>
             </wu:Card>
+            <wu:Card Margin="12,12,16,0" Visibility="Collapsed" x:Name="dw_card">
+                <StackPanel>
+                    <TextBlock Text="下载任务初始化中~" x:Name="dw_info"/>
+                    <ui:ProgressBar x:Name="dw_pro"/>
+                </StackPanel>
+            </wu:Card>
             <wu:CardControl Margin="12,12,16,16" Title="更新日志" Icon="History16" Subtitle="服务器中无此整合包更新日志！" x:Name="his_card"/>
 
 
@@ -45,12 +51,7 @@
                     <Button Content="开始转换"/>
                 </StackPanel>
             </wu:Card>
-            <wu:Card Margin="12,12,16,0" Visibility="Collapsed" x:Name="dw_card">
-                <StackPanel>
-                <TextBlock Text="下载任务初始化中~" x:Name="dw_info"/>
-                <ui:ProgressBar x:Name="dw_pro"/>
-                </StackPanel>
-            </wu:Card>
+
         </StackPanel>
     </Grid>
 </Page>

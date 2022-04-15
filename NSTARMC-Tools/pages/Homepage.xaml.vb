@@ -266,20 +266,24 @@ Class Homepage
                     Dim json As JObject = CType(JsonConvert.DeserializeObject(jsonback), JObject)
                     For Each x In json("group")
                         mclist.Dispatcher.Invoke(New Action(Sub()
-                                                                For Each x2 In json("group")(0)("list")
-                                                                    Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
-                                                                    If json2("id").ToString > 10000 Then
-                                                                        If json2("id").ToString < 20000 Then
-                                                                            If json2("id").ToString = Int(info_xml.<packid>.Value) Then
-                                                                                ol_ok = 1
-                                                                                year_ol = json2("update_time")("year").ToString
-                                                                                month_ol = json2("update_time")("month").ToString
-                                                                                day_ol = json2("update_time")("date").ToString
-                                                                                url_online = json2("download")
-                                                                                Exit For
+                                                                For Each x2 In json("group")
+                                                                    Dim json3 As JObject = CType(JsonConvert.DeserializeObject(x2.ToString), JObject)
+                                                                    For Each x3 In json3("list")
+                                                                        Dim json2 As JObject = CType(JsonConvert.DeserializeObject(x3.ToString), JObject)
+                                                                        If json2("id").ToString > 10000 Then
+                                                                            If json2("id").ToString < 20000 Then
+                                                                                If json2("id").ToString = Int(info_xml.<packid>.Value) Then
+                                                                                    ol_ok = 1
+                                                                                    year_ol = json2("update_time")("year").ToString
+                                                                                    month_ol = json2("update_time")("month").ToString
+                                                                                    day_ol = json2("update_time")("date").ToString
+                                                                                    url_online = json2("download")
+                                                                                    Exit For
+                                                                                End If
                                                                             End If
                                                                         End If
-                                                                    End If
+                                                                    Next
+
 
                                                                 Next
                                                             End Sub))

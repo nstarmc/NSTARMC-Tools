@@ -11,7 +11,11 @@
     <Grid>
 
         <StackPanel Grid.ColumnSpan="2">
-            <wpfui:CardControl Icon="ArrowDownload16" Margin="12,18,16,0" Title="下载NSTAR系列整合包" Subtitle="你可以在下方进行下载NSTAR系列整合包~"/>
+            <wpfui:CardControl Icon="ArrowDownload16" Margin="12,18,16,0" Title="下载NSTAR系列整合包" Subtitle="你可以在下方进行下载NSTAR系列整合包~&#13;注意：如果下载速度太慢，可以尝试在设置页面增加下载线程数量">
+                <wpfui:CardControl.Background>
+                    <SolidColorBrush Color="#FF00FFAC" Opacity="0.35"/>
+                </wpfui:CardControl.Background>
+            </wpfui:CardControl>
             <TextBlock Margin="12,18,16,0" Text="自动下载"/>
             <StackPanel Orientation="Horizontal">
                 <wpfui:Card Margin="12,18,16,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
