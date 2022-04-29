@@ -1,6 +1,14 @@
 # NSTARMC-Tools
 
+## 赞助
+
+你可以通过以下网站赞助
+
+[https://afdian.net/@xiaoyululu](https://afdian.net/@xiaoyululu)
+
 ## 简介
+
+具体看：[NSTARMC-Tools Docs | NSTARMC-Tools Docs](https://packs.nstarmc.cn/)
 
 ### 开篇
 
@@ -8,7 +16,7 @@
 
 整合包原帖：[[1.18.1—1.7.10\]NSTAR（夜阑星空）基础模组整合包（含光影） - 整合包发布 - Minecraft(我的世界)中文论坛 - (mcbbs.net)](https://www.mcbbs.net/thread-1025346-1-1.html)。  
 
-开源目的是更方便管理版本，已经预防有些人说有病毒。  
+开源目的是更方便管理版本，已预防有些人说有病毒。  
 
 ### 功能，UI介绍
 

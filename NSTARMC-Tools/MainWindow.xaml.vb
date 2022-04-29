@@ -174,6 +174,7 @@ Class MainWindow
                         brush.ImageSource = New BitmapImage(New Uri("pack://application:,,,/NSTARMC-Tools;component/res/mc1.jpg", UriKind.Absolute))
                         NavView.Background = brush
                         NavView.Background.Opacity = data("UI")("Background_Opacity")
+
                         '————下载下一次的bg————
                         Dim request As HttpWebRequest = WebRequest.Create("https://res.nstarmc.cn/olbg.json")
                         request.Method = "GET"
