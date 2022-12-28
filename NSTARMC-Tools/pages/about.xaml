@@ -1,0 +1,121 @@
+﻿<Page x:Class="about"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NSTARMC_Tools"
+      mc:Ignorable="d" 
+      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="about"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:wu="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+      xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" Loaded="Page_Loaded" ScrollViewer.VerticalScrollBarVisibility="Auto">
+    <Grid>
+        <StackPanel Margin="0,0,0,0">
+            <wu:CardControl Title="关于本工具" Subtitle="本工具为夜阑星空（NSTAR）整合包的集合工具" Margin="12,8,16,0" Icon="PersonAccounts24">
+                <StackPanel Orientation="Horizontal">
+                    <wu:Hyperlink Content="打开官网" Cursor="Hand" Padding="4" NavigateUri="https://packs.nstarmc.cn" Background="#FFE1DD20" BorderBrush="#FFB7D036" FontSize="18" FontWeight="Bold" />
+                    <wu:Hyperlink Content="赞助我们" Cursor="Hand" Padding="4" NavigateUri="https://afdian.net/@xiaoyululu" FontSize="18" FontWeight="Bold" >
+                        <wu:Hyperlink.Foreground>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFCFDB2F" Offset="0"/>
+                                <GradientStop Color="#FFE21BF1" Offset="1"/>
+                            </LinearGradientBrush>
+                        </wu:Hyperlink.Foreground>
+                    </wu:Hyperlink>
+                </StackPanel>
+            </wu:CardControl>
+            <wu:CardControl Title="版本信息" Subtitle="" Margin="12,8,16,0" Icon="Info16" x:Name="verinfo">
+                <Button x:Name="bt_copy" Content="复制工具信息"/>
+            </wu:CardControl>
+            <wu:CardControl Title="资源服务器延迟" Subtitle="" Margin="12,8,16,0" Icon="NetworkCheck24" x:Name="ping_card">
+                <Button x:Name="bt_ping" Content="检测延迟" Style="{StaticResource AccentButtonStyle}"/>
+            </wu:CardControl>
+            <wu:CardControl Title="Beta版本授权信息" Subtitle="授权信息" Margin="12,8,16,0" Icon="PersonSupport16" x:Name="ver_beta">
+                <Button Content="激活授权"  Style="{StaticResource AccentButtonStyle}" Click="Button_Click_2" x:Name="bt_shouquan"/>
+            </wu:CardControl>
+            <wpfui:Card Margin="12,8,16,0" Visibility="Collapsed" x:Name="info_shouquan">
+                <StackPanel Margin="0,0,0,0">
+                    <TextBlock Text="赞助者授权Beta使用权系统" Margin="0,5,0,5" FontSize="16"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0,-3,0,0">
+                        <TextBlock Text="您的设备ID：" FontSize="15" VerticalAlignment="Center" />
+                        <TextBox x:Name="sb_id" IsReadOnly="True"/>
+                        <Button Content="复制" Margin="12,0,0,0" Style="{StaticResource AccentButtonStyle}" Click="Button_Click"/>
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0,12,0,0">
+                        <TextBlock Text="请填写Key到期时间：" FontSize="15" VerticalAlignment="Center"/>
+                        <ComboBox SelectedIndex="0" x:Name="key_year">
+                            <ComboBoxItem Content="2022"/>
+                            <ComboBoxItem Content="2023"/>
+                            <ComboBoxItem Content="2024"/>
+                            <ComboBoxItem Content="2025"/>
+                            <ComboBoxItem Content="2026"/>
+                            <ComboBoxItem Content="2027"/>
+                            <ComboBoxItem Content="2028"/>
+                            <ComboBoxItem Content="2029"/>
+                        </ComboBox>
+
+                        <TextBlock Text="年" FontSize="15" VerticalAlignment="Center" Margin="6,0,6,0"/>
+                        <ComboBox SelectedIndex="0" x:Name="key_month">
+                            <ComboBoxItem Content="1"/>
+                            <ComboBoxItem Content="2"/>
+                            <ComboBoxItem Content="3"/>
+                            <ComboBoxItem Content="4"/>
+                            <ComboBoxItem Content="5"/>
+                            <ComboBoxItem Content="6"/>
+                            <ComboBoxItem Content="7"/>
+                            <ComboBoxItem Content="8"/>
+                            <ComboBoxItem Content="9"/>
+                            <ComboBoxItem Content="10"/>
+                            <ComboBoxItem Content="11"/>
+                            <ComboBoxItem Content="12"/>
+                        </ComboBox>
+                        <TextBlock Text="月" FontSize="15" VerticalAlignment="Center" Margin="6,0,6,0"/>
+                        <TextBox x:Name="key_day" Text="1" InputMethod.IsInputMethodEnabled="False"/>
+                        <TextBlock Text="日" FontSize="15" VerticalAlignment="Center" Margin="6,0,6,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0,12,0,0">
+                        <TextBlock Text="请输入Key（授权码）：" FontSize="15" VerticalAlignment="Center"/>
+                        <TextBox x:Name="key_input" TextWrapping="Wrap"/>
+                        <Button Content="确定" Margin="12,0,0,0" Style="{StaticResource AccentButtonStyle}" Click="Button_Click_1"/>
+                    </StackPanel>
+                </StackPanel>
+            </wpfui:Card>
+
+
+            <wu:CardControl Title="加入Q群" Subtitle="加入qq群进行交流，建议，or just 闲聊" Margin="12,8,16,0" Icon="Group20">
+                <wu:Hyperlink Content="点击入群"  NavigateUri="http://t.cn/A6qD46L7" Padding="4" Cursor="Hand"/>
+            </wu:CardControl>
+            <wpfui:CardExpander  Header="赞助列表（From 爱发电）" Subtitle="您的鼓励是我们前进的动力！" Margin="12,8,16,0" Icon="PersonSupport16">
+                <wu:CardExpander.BorderBrush>
+                    <LinearGradientBrush EndPoint="0,3" MappingMode="Absolute">
+                        <GradientStop Color="#18FFFFFF" Offset="0.33"/>
+                        <GradientStop Color="#FF3B1999" Offset="200"/>
+                    </LinearGradientBrush>
+                </wu:CardExpander.BorderBrush>
+                <wu:CardExpander.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" Opacity="0.5">
+                        <GradientStop Color="#FF18C606"/>
+                        <GradientStop Color="#FF21D9D5" Offset="1"/>
+                    </LinearGradientBrush>
+                </wu:CardExpander.Background>
+                <StackPanel Margin="5" Orientation="Horizontal">
+                    <TextBlock Text="加载中···" x:Name="zanzhulist"></TextBlock>
+                </StackPanel>
+            </wpfui:CardExpander>
+            <wpfui:CardExpander  Header="未来更新计划" Subtitle="以下为本工具计划的更新功能和内容，如果你有别的建议，可以再意见反馈页面提交" Margin="12,8,16,0" Icon="TaskListAdd20">
+                <StackPanel Margin="5" Orientation="Horizontal">
+                    <TextBlock Text="加载中···" x:Name="upfu"></TextBlock>
+                </StackPanel>
+            </wpfui:CardExpander>
+            <wpfui:CardExpander  Header="更新日志"  Subtitle="以下为本工具的更新日志" Margin="12,8,16,0" Icon="History16">
+                <StackPanel Margin="5" Orientation="Horizontal">
+                    <TextBlock Text="加载中···" x:Name="uphist"></TextBlock>
+                </StackPanel>
+            </wpfui:CardExpander>
+          
+        </StackPanel>
+    </Grid>
+</Page>

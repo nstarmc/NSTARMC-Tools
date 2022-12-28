@@ -1,0 +1,37 @@
+﻿<Page x:Class="Homepage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NSTARMC_Tools"
+      mc:Ignorable="d" 
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Homepage"
+      xmlns:wu="clr-namespace:WPFUI.Controls;assembly=WPFUI" ScrollViewer.VerticalScrollBarVisibility="Auto" Loaded="Page_Loaded">
+    <Grid>
+        <StackPanel>
+            <wu:CardControl Title="发现新版本" Subtitle="正在下载新版本整合包工具，请稍等···"  Margin="12,12,16,0" x:Name="upinfo" Icon="New16" Visibility="Collapsed">
+                <ui:ProgressRing Visibility="Visible" IsActive="True" x:Name="ring1"/>
+            </wu:CardControl>
+            <wu:CardControl Margin="12,12,16,0" Icon="Thinking20" x:Name="one_say_card" Title="一言" Subtitle="loading···" />
+            <wu:CardControl Title="公告" Subtitle="公告加载中···"  Margin="12,12,16,0" x:Name="notice1" Icon="Note16"/>
+           
+            <wu:CardControl Title="选择版本" Subtitle="选择你想启动的版本。"  Margin="12,12,16,0" Icon="List16" x:Name="card_list">
+
+                <ComboBox x:Name="mclist">
+                </ComboBox>
+            </wu:CardControl>
+            <wu:CardControl Title="版本信息：" Subtitle="以下为你选中的整合包版本信息"  Margin="12,12,16,0" Icon="Info16" x:Name="card_info">
+                <Label x:Name="verinfolabel"/>
+            </wu:CardControl>
+            <wu:CardControl Title="启动游戏" Subtitle="点击右侧按钮启动游戏吧！"  Margin="12,12,16,12" Icon="Open16" x:Name="card_lauch">
+                <StackPanel>
+                    <Button Content="使用PCL2启动游戏" Cursor="Hand" Style="{StaticResource AccentButtonStyle}" Margin="0,0,0,6" x:Name="lauch_1"></Button>
+                    <Button Content="使用HMCL启动游戏" Cursor="Hand" Style="{StaticResource AccentButtonStyle}" x:Name="lauch_2"></Button>
+                </StackPanel>
+                
+            </wu:CardControl>
+        </StackPanel>
+    </Grid>
+</Page>
